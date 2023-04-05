@@ -1,0 +1,9 @@
+05/05/23
+Initial project set up and connected to github repo
+- Basic tile script added
+    - stores its position, its state and corresponding object
+    - Can change color
+- Basic tilegrid script added
+    - Controls the basics of the grid
+    - Can spawn a grid of any size
+    - Aligns the grid to the centre of the screen
