@@ -1,4 +1,4 @@
-05/05/23
+05/04/23
 Initial project set up and connected to github repo
 - Basic tile script added
     - stores its position, its state and corresponding object
@@ -7,3 +7,10 @@ Initial project set up and connected to github repo
     - Controls the basics of the grid
     - Can spawn a grid of any size
     - Aligns the grid to the centre of the screen
+
+06/04/23
+Can now add rooms by pressing spacebar
+-work beginning on BSP
+-Basic BSP finished
+    - BSP only partitions perfect 50/50's, i.e. straight down the middle
+    - BSP partitions randomly either horizontally or vertically

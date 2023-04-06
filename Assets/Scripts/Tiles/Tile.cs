@@ -29,11 +29,6 @@ public class Tile
         tileObject.GetComponent<Renderer>().SetPropertyBlock(block);
     }
     #endregion
-    public void UpdateRenderer()
-    {
-        if(tileObject == null){return;}
-        tileObject.GetComponent<Renderer>().enabled = active;
-    }
     #region Setters
     public void SetActive(bool _active)
     {
