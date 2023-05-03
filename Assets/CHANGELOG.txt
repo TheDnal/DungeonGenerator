@@ -14,3 +14,7 @@ Can now add rooms by pressing spacebar
 -Basic BSP finished
     - BSP only partitions perfect 50/50's, i.e. straight down the middle
     - BSP partitions randomly either horizontally or vertically
+
+03/05/23
+Long hiatus due to group project
+- Reset the project for a clean start 
