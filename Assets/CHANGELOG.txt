@@ -18,3 +18,16 @@ Can now add rooms by pressing spacebar
 03/05/23
 Long hiatus due to group project
 - Reset the project for a clean start 
+- Project will be split into different sections : 
+    - grid generation (deciding tile shape, size etc)
+    - grid terrain (holes, chasms etc that decide where structres can generate)
+    - Room distribution (how are rooms spread out? randomly? BSP's ? room accretion etc)
+    - Room shape 
+    - Room details (machines, etc)
+
+04/05/23
+Basic grid generation implemented
+    - Only square tiles so far
+Basic Camera controls added
+    - Can move up and down with Q and E 
+    
