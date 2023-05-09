@@ -167,8 +167,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   gridCentre: {x: 0, y: 0, z: 0}
   gridDimensions: {x: 15, y: 15}
-  tileDimensions: 2
+  tileDimensions: 1.25
   squareTilePrefab: {fileID: 5719493688605595355, guid: 231e182767a89774091eaf5e40e46b39, type: 3}
+  gridShape: 1
 --- !u!4 &369786728
 Transform:
   m_ObjectHideFlags: 0
@@ -237,7 +238,7 @@ Camera:
   near clip plane: 0.3
   far clip plane: 1000
   field of view: 60
-  orthographic: 0
+  orthographic: 1
   orthographic size: 20
   m_Depth: -1
   m_CullingMask:

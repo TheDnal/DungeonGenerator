@@ -26,9 +26,15 @@ public class CameraController : MonoBehaviour
             velocity += Vector3.down;
         }
         //Apply velocity to transform
-        transform.position += velocity * moveSpeed * Time.deltaTime;
         
         //Clamp
+        Camera cam = this.GetComponent<Camera>();
+        if(cam.orthographic)
+        {
+            cam.orthographicSize += velocity.y * moveSpeed * Time.deltaTime;
+            return; 
+        }
+        transform.position += velocity * moveSpeed * Time.deltaTime;
         Vector3 pos = transform.position;
         pos.y = Mathf.Clamp(pos.y,minheight,maxHeight);
         transform.position = pos;

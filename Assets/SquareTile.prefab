@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 5719493688605595351}
   - component: {fileID: 5719493688605595350}
   - component: {fileID: 5719493688605595348}
+  - component: {fileID: -3704709973279635878}
   m_Layer: 0
   m_Name: SquareTile
   m_TagString: Untagged
@@ -60,7 +61,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 31321ba15b8f8eb4c954353edc038b1d, type: 2}
+  - {fileID: 2100000, guid: 5a2b0e7fcaa3a484ba5079d08db22d64, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -94,3 +95,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a5976ad7aa259b640a1f5ac9ee6d49aa, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!65 &-3704709973279635878
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5719493688605595355}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 1
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 1, y: 1, z: 1}
+  m_Center: {x: 0, y: 0, z: 0}

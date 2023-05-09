@@ -30,4 +30,9 @@ Basic grid generation implemented
     - Only square tiles so far
 Basic Camera controls added
     - Can move up and down with Q and E 
-    
+
+09/05/23
+Grid can now generate hexagonal lattices alongside original square lattices
+    - Tiles now store their position on the grid and can get their neighbour tiles (works for hex grid)
+    - For testing purposes, tiles can be clicked which will highlight them and their neigbour tiles
+    - Next will be to work on grid terrain, adding noise to simulate terrain such as hills, holes, chasms etc
