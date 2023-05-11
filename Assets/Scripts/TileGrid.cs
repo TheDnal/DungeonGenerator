@@ -7,6 +7,7 @@ public class TileGrid : MonoBehaviour
     public static TileGrid instance;
     private Tile[,] tiles;
     private Vector2Int dimensions;
+    public bool highlightTerrain = false;
     public enum TileGridShape
     {
         SQUARE,
@@ -55,13 +56,16 @@ public class TileGrid : MonoBehaviour
                 GameObject newTile = Instantiate(_prefab,corner + offset,Quaternion.identity);
                 tiles[i,j] = newTile.GetComponent<Tile>();
                 newTile.GetComponent<Tile>().Init(new Vector2Int(i,j));
+                newTile.GetComponent<Tile>().ResetColor();
             }
         }
     }
     public TileGridShape GetTileGridShape(){return shape;}
     public Tile GetTile(Vector2Int _coords)
     {
-        if(_coords.x < 0 || _coords.y < 0 || _coords.x > dimensions.x || _coords.y > dimensions.y){return null;}
+        if(_coords.x < 0 || _coords.y < 0 || _coords.x >= dimensions.x || _coords.y >= dimensions.y){return null;}
         return tiles[_coords.x,_coords.y];
     }
+    public Tile[,] GetTiles(){return tiles;}
+    public Vector2Int GetDimensions(){return dimensions;}
 }

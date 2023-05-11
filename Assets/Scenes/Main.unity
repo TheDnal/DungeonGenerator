@@ -134,6 +134,7 @@ GameObject:
   - component: {fileID: 369786728}
   - component: {fileID: 369786727}
   - component: {fileID: 369786726}
+  - component: {fileID: 369786729}
   m_Layer: 0
   m_Name: TileGrid
   m_TagString: Untagged
@@ -153,6 +154,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0cb34ce1d6de5314d8fd3697bbdd71c8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  highlightTerrain: 0
 --- !u!114 &369786727
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -166,10 +168,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   gridCentre: {x: 0, y: 0, z: 0}
-  gridDimensions: {x: 15, y: 15}
-  tileDimensions: 1.25
+  gridDimensions: {x: 25, y: 25}
+  tileDimensions: 1.1
   squareTilePrefab: {fileID: 5719493688605595355, guid: 231e182767a89774091eaf5e40e46b39, type: 3}
-  gridShape: 1
+  gridShape: 0
 --- !u!4 &369786728
 Transform:
   m_ObjectHideFlags: 0
@@ -184,6 +186,22 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &369786729
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 369786725}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 15f245bb7a47c8c448d696fc69b7c980, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  terrainType: 0
+  rndChance: 0.1
+  frequency: 5
+  scale: 15
 --- !u!1 &1091082876
 GameObject:
   m_ObjectHideFlags: 0
