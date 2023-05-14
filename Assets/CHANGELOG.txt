@@ -46,3 +46,15 @@ Grid can now generate hexagonal lattices alongside original square lattices
 Grid can now generate some noise
     - Perlin noise with some controllable values
     - Random nosie
+
+14/05/23
+UI framework now implemented
+    - UI Has a main menu thats split into differnet sub-menus
+        - Grid generation
+        - terrain
+        - Room distribution
+        - Room shape
+        - details
+        - Misc
+        - Help
+This will allow direct access to the program rather than changing values in the inspector

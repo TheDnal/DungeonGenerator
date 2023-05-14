@@ -16,22 +16,31 @@ public class GridTerrainGenerator : MonoBehaviour
     public float frequency = 1;
     public float scale = 1;
     public float threshold = 0.3f;
-    void Update()
+    public static GridTerrainGenerator instance;
+    void Awake()
     {
-        if(Input.GetKeyDown(KeyCode.T))
+        if(instance != null)
         {
-            ResetTerrain();
-            switch(terrainType)
+            if(instance != this)
             {
-                case TerrainType.RANDOM:
-                    ApplyRandNoise();
-                    break;
-                case TerrainType.PERLIN:
-                    ApplyPerlinNoise();
-                    break;
-                default:
-                    break;
+                Destroy(this);
             }
+        }
+        instance = this;
+    }
+    public void GenerateTerrain()
+    {
+        ResetTerrain();
+        switch(terrainType)
+        {
+            case TerrainType.RANDOM:
+                ApplyRandNoise();
+                break;
+            case TerrainType.PERLIN:
+                ApplyPerlinNoise();
+                break;
+            default:
+                break;
         }
     }
     private void ApplyRandNoise()

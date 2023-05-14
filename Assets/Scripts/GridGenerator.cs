@@ -9,11 +9,20 @@ public class GridGenerator : MonoBehaviour
     public float tileDimensions;
     public GameObject squareTilePrefab;
     public TileGrid.TileGridShape gridShape = TileGrid.TileGridShape.SQUARE;
-    void Update()
+    public static GridGenerator instance;
+    void Awake()
     {
-        if(Input.GetKeyDown(KeyCode.Space))
+        if(instance != null)
         {
-            TileGrid.instance.Initialise(gridCentre,gridDimensions,squareTilePrefab,tileDimensions,gridShape);
+            if(instance != this)
+            {
+                Destroy(this);
+            }
         }
+        instance = this;
+    }
+    public void GenerateGrid()
+    {
+        TileGrid.instance.Initialise(gridCentre,gridDimensions,squareTilePrefab,tileDimensions,gridShape);
     }
 }
