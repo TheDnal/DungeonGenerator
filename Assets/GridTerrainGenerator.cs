@@ -1,7 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
+using Unity.Mathematics;
 public class GridTerrainGenerator : MonoBehaviour
 {
     public enum TerrainType
@@ -12,12 +12,20 @@ public class GridTerrainGenerator : MonoBehaviour
         NONE
     }
     public TerrainType terrainType = TerrainType.RANDOM;
+    //Rand
+    private int rndSeed = 0;
     public float rndChance = 0.1f;
-    [Header("Perlin noise")]
-    public float frequency = 1;
+    //Perlin
+    private int perlinSeed = 0;
     public float scale = 1;
     public float threshold = 0.3f;
     public Vector2 perlinOffset = new Vector2();
+
+    //voronoi 
+    private int voronoiSeed = 0;
+    private float voronoiRadius = 1;
+    private int voronoiDensity = 5;
+    private Vector2 voronoiOffset = new Vector2();
     public static GridTerrainGenerator instance;
     void Awake()
     {
@@ -29,6 +37,7 @@ public class GridTerrainGenerator : MonoBehaviour
             }
         }
         perlinOffset = Vector2.zero;
+        voronoiOffset = Vector2.zero;
         instance = this;
     }
     public void SetTerrainType(int _index)
@@ -50,6 +59,9 @@ public class GridTerrainGenerator : MonoBehaviour
             case TerrainType.NONE:
                 ResetTerrain();
                 break;
+            case TerrainType.VORONOI:
+                ApplyCellularNoise();
+                break;
             default:
                 ResetTerrain(); 
                 break;
@@ -59,9 +71,10 @@ public class GridTerrainGenerator : MonoBehaviour
     {
         Tile[,] tiles = TileGrid.instance.GetTiles();
         Vector2Int dimensions = TileGrid.instance.GetDimensions();
+        UnityEngine.Random.seed = rndSeed;
         foreach(Tile currTile in tiles)
         {
-            float chance = Random.Range(0,100);
+            float chance = UnityEngine.Random.Range(0,100);
             if(chance <= rndChance * 100)
             {
                 currTile.PaintTile(Color.red, Tile.TileType.terrain);
@@ -89,6 +102,33 @@ public class GridTerrainGenerator : MonoBehaviour
             }
         }
     }
+    private void ApplyCellularNoise()
+    {
+        Tile[,] tiles = TileGrid.instance.GetTiles();
+        Vector2Int dimensions = TileGrid.instance.GetDimensions();
+        UnityEngine.Random.seed = voronoiSeed;
+        List<Vector2> voronoiPoints = new List<Vector2>();
+        for(int i = 0; i < voronoiDensity; i++)
+        {
+            float x = UnityEngine.Random.Range(0,dimensions.x);
+            float y = UnityEngine.Random.Range(0,dimensions.y);
+            voronoiPoints.Add(new Vector2(x,y));
+        }
+        for(int x = 0; x < dimensions.x; x++){
+            for(int y = 0; y < dimensions.y; y++)
+            {
+                foreach(Vector2 point in voronoiPoints)
+                {
+                    float distance = Vector2.Distance(point, new Vector2(x + voronoiOffset.x,y + voronoiOffset.y));
+                    if(distance <= voronoiRadius)
+                    {
+                        tiles[x,y].PaintTile(Color.red,Tile.TileType.terrain);
+                        break;
+                    }
+                }
+            }
+        }
+    }
     private void ResetTerrain()
     {
         Tile[,] tiles = TileGrid.instance.GetTiles();
@@ -99,10 +139,10 @@ public class GridTerrainGenerator : MonoBehaviour
         }
     }
     #region PerlinSetters
-    public void SetPerlinFrequency(float _frequency)
+    public void SetPerlinSeed(int _seed)
     {
-        //frequency = _frequency;
-        //GenerateTerrain();
+        perlinSeed = _seed;
+        GenerateTerrain();
     }
     public void SetPerlinScale(float _scale)
     {
@@ -125,11 +165,43 @@ public class GridTerrainGenerator : MonoBehaviour
         GenerateTerrain();    
     }
     #endregion
-
+    #region RndSetters
     public void SetRandThreshold(float _val)
     {
         rndChance = _val;
         GenerateTerrain();
     }
-
+    public void SetRandSeed(int _seed)
+    {
+        rndSeed = _seed;
+        GenerateTerrain();
+    }
+    #endregion
+    #region Voronoi Setters
+    public void SetVoronoiSeed(int _seed)
+    {   
+        voronoiSeed = _seed;
+        GenerateTerrain();
+    }   
+    public void SetVoronoiRadius(int _radius)
+    {
+        voronoiRadius = _radius;
+        GenerateTerrain();
+    }
+    public void SetVoronoiOffsetX(int _x)
+    {
+        voronoiOffset.x = _x;
+        GenerateTerrain();
+    }
+    public void SetVoronoiOffsetY(int _y)
+    {
+        voronoiOffset.y = _y;
+        GenerateTerrain();
+    }
+    public void SetVoronoiDensity(int _density)
+    {
+        voronoiDensity = _density;
+        GenerateTerrain();
+    }
+    #endregion
 }

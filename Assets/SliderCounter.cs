@@ -12,13 +12,20 @@ public class SliderCounter : MonoBehaviour
         gridHeight,
 
         //Terrain Data
-        perlinFrequency,
+        perlinSeed,
         perlinScale,
         perlinThreshold,
         perlinOffsetX,
         perlineOffsetY,
-
-        randThreshold
+        //Rand data
+        randThreshold,
+        randSeed,
+        //Voronoi data
+        voronoiSeed,
+        voronoiRadius,
+        voronoiDensity,
+        voronoiOffsetX,
+        voronoiOffsetY
     }
     public enum roundDisplayType
     {
@@ -49,15 +56,18 @@ public class SliderCounter : MonoBehaviour
         counter.text = val.ToString();
         switch(sliderType)
         {
+
             case dataType.gridWidth:
                 GridGenerator.instance.SetWidth(Mathf.RoundToInt(val));
                 break;
             case dataType.gridHeight:
                 GridGenerator.instance.SetHeight(Mathf.RoundToInt(val));
                 break;
-            case dataType.perlinFrequency:
-                GridTerrainGenerator.instance.SetPerlinFrequency(val);
-                break;
+
+
+            case dataType.perlinSeed:
+                GridTerrainGenerator.instance.SetPerlinSeed(Mathf.RoundToInt(val));
+                break;    
             case dataType.perlinScale:
                 GridTerrainGenerator.instance.SetPerlinScale(val);
                 break;
@@ -70,8 +80,29 @@ public class SliderCounter : MonoBehaviour
             case dataType.perlineOffsetY:
                 GridTerrainGenerator.instance.SetPerlinOffsetY(val);
                 break;
+
+
             case dataType.randThreshold:
                 GridTerrainGenerator.instance.SetRandThreshold(val);
+                break;
+            case dataType.randSeed:
+                GridTerrainGenerator.instance.SetRandSeed(Mathf.RoundToInt(val));
+                break;
+                
+            case dataType.voronoiSeed:
+                GridTerrainGenerator.instance.SetVoronoiSeed(Mathf.RoundToInt(val));
+                break;
+            case dataType.voronoiRadius:
+                GridTerrainGenerator.instance.SetVoronoiRadius(Mathf.RoundToInt(val));
+                break;
+            case dataType.voronoiDensity:
+                GridTerrainGenerator.instance.SetVoronoiDensity(Mathf.RoundToInt(val));
+                break;
+            case dataType.voronoiOffsetX:
+                GridTerrainGenerator.instance.SetVoronoiOffsetX(Mathf.RoundToInt(val));
+                break;
+            case dataType.voronoiOffsetY:
+                GridTerrainGenerator.instance.SetVoronoiOffsetY(Mathf.RoundToInt(val));
                 break;
         }
     }

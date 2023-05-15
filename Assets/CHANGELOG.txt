@@ -58,3 +58,27 @@ UI framework now implemented
         - Misc
         - Help
 This will allow direct access to the program rather than changing values in the inspector
+
+15/05/23
+UI framework significently updated
+    - Grid generation and terrain generation can now be directly edited from the UI.
+        - Grid generation can have its shape and dimensions edited
+Grid Terrain Mostly implemented, which can be fully controlled from the UI;
+    - Perlin noise
+        - Scale of the noise
+        - threshold value required to turn a tile into terrain
+        - offset vector2 to move around the noise freely
+        - Seed UI implemented but seed not functional as of yet
+    - Voronoi noise
+        - Fully implemented seed
+        - Radius ; the radius of tiles surrounding a voronoi point that become terrain
+        - Density ; the amount of voronoi points on the grid
+        - offset vector2 to move around the noise freely
+    - Random noise
+        - randomly picks a number between 1 and 100 for each tile which decides if its terrain
+        - fully implemented seed
+        - threshold that decides how high the number needs to be to become terrain (effectively a perctange)
+As terrain is mostly completed, work will now move onto room distribution.
+Known bugs :
+    - Hex grid does not interact correctly with voronoi distance calculations.
+        - the grid script should control calculations for distances between nodes
