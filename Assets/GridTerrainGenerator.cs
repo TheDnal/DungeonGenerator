@@ -8,7 +8,8 @@ public class GridTerrainGenerator : MonoBehaviour
     {
         PERLIN,
         VORONOI,
-        RANDOM
+        RANDOM,
+        NONE
     }
     public TerrainType terrainType = TerrainType.RANDOM;
     public float rndChance = 0.1f;
@@ -16,6 +17,7 @@ public class GridTerrainGenerator : MonoBehaviour
     public float frequency = 1;
     public float scale = 1;
     public float threshold = 0.3f;
+    public Vector2 perlinOffset = new Vector2();
     public static GridTerrainGenerator instance;
     void Awake()
     {
@@ -26,7 +28,13 @@ public class GridTerrainGenerator : MonoBehaviour
                 Destroy(this);
             }
         }
+        perlinOffset = Vector2.zero;
         instance = this;
+    }
+    public void SetTerrainType(int _index)
+    {
+        terrainType = (TerrainType)_index;
+        GenerateTerrain();
     }
     public void GenerateTerrain()
     {
@@ -39,7 +47,11 @@ public class GridTerrainGenerator : MonoBehaviour
             case TerrainType.PERLIN:
                 ApplyPerlinNoise();
                 break;
+            case TerrainType.NONE:
+                ResetTerrain();
+                break;
             default:
+                ResetTerrain(); 
                 break;
         }
     }
@@ -60,16 +72,20 @@ public class GridTerrainGenerator : MonoBehaviour
     {
         Tile[,] tiles = TileGrid.instance.GetTiles();
         Vector2Int dimensions = TileGrid.instance.GetDimensions();
-        foreach(Tile currTile in tiles)
+        if(scale <= 0)
         {
-            Vector2 coords = currTile.GetCoords();
-            float x,y;
-            x = coords.x / scale * frequency;
-            y = coords.y / scale * frequency;
-            float val = Mathf.PerlinNoise(x,y);
-            if(val <= threshold)
+            scale = 0.01f;
+        }
+        for(int y = 0; y < dimensions.y; y++){
+            for(int x = 0; x < dimensions.x; x++)
             {
-                currTile.PaintTile(Color.red,Tile.TileType.terrain);
+                float sampleX = (x + perlinOffset.x) / scale;
+                float sampleY = (y + perlinOffset.y) / scale;
+                float val = Mathf.PerlinNoise(sampleX,sampleY);
+                if(val <= threshold)
+                {
+                    tiles[x,y].PaintTile(Color.red,Tile.TileType.terrain);
+                }
             }
         }
     }
@@ -82,4 +98,38 @@ public class GridTerrainGenerator : MonoBehaviour
             currTile.ResetColor();
         }
     }
+    #region PerlinSetters
+    public void SetPerlinFrequency(float _frequency)
+    {
+        //frequency = _frequency;
+        //GenerateTerrain();
+    }
+    public void SetPerlinScale(float _scale)
+    {
+        scale = _scale;
+        GenerateTerrain();
+    }
+    public void SetPerlinThreshold(float _val)
+    {
+        threshold = _val;
+        GenerateTerrain();
+    }
+    public void SetPerlinOffsetX(float _val)
+    {
+        perlinOffset.x = _val;
+        GenerateTerrain();    
+    }
+    public void SetPerlinOffsetY(float _val)
+    {
+        perlinOffset.y = _val;
+        GenerateTerrain();    
+    }
+    #endregion
+
+    public void SetRandThreshold(float _val)
+    {
+        rndChance = _val;
+        GenerateTerrain();
+    }
+
 }

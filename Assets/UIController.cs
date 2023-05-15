@@ -30,14 +30,6 @@ public class UIController : MonoBehaviour
     {
         HideUI();
     }
-    public void OnGenerateGrid()
-    {
-        GridGenerator.instance.GenerateGrid();
-    }
-    public void OnGenerateTerrain()
-    {
-        GridTerrainGenerator.instance.GenerateTerrain();
-    }
     public void GoToPage(int _pageNum)
     {
         currPage = (UIPage)_pageNum;

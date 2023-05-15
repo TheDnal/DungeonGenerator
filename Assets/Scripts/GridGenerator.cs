@@ -20,9 +20,26 @@ public class GridGenerator : MonoBehaviour
             }
         }
         instance = this;
+        GenerateGrid();
     }
     public void GenerateGrid()
     {
+        
         TileGrid.instance.Initialise(gridCentre,gridDimensions,squareTilePrefab,tileDimensions,gridShape);
+    }
+    public void SetHeight(int _height)
+    {
+        gridDimensions.y = _height;
+        GenerateGrid();
+    }
+    public void SetWidth(int _width)
+    {
+        gridDimensions.x = _width;
+        GenerateGrid();
+    }
+    public void SetGridShape(int _index )
+    {
+        gridShape = (TileGrid.TileGridShape)_index;
+        GenerateGrid();
     }
 }
