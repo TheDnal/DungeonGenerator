@@ -25,7 +25,10 @@ public class SliderCounter : MonoBehaviour
         voronoiRadius,
         voronoiDensity,
         voronoiOffsetX,
-        voronoiOffsetY
+        voronoiOffsetY,
+
+        //Room distribution
+        Room_Count
     }
     public enum roundDisplayType
     {
@@ -103,6 +106,11 @@ public class SliderCounter : MonoBehaviour
                 break;
             case dataType.voronoiOffsetY:
                 GridTerrainGenerator.instance.SetVoronoiOffsetY(Mathf.RoundToInt(val));
+                break;
+
+
+            case dataType.Room_Count:
+                RoomDistributor.instance.SetRoomCount(Mathf.RoundToInt(val));
                 break;
         }
     }

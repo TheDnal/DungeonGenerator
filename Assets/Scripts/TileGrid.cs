@@ -57,6 +57,10 @@ public class TileGrid : MonoBehaviour
                 tiles[i,j] = newTile.GetComponent<Tile>();
                 newTile.GetComponent<Tile>().Init(new Vector2Int(i,j));
                 newTile.GetComponent<Tile>().ResetColor();
+                if(i == 0 || j == 0 || i == dimensions.x - 1 || j == dimensions.y - 1)
+                {
+                    newTile.GetComponent<Tile>().PaintTile(Color.red,Tile.TileType.Edge);
+                }
             }
         }
     }
@@ -67,5 +71,36 @@ public class TileGrid : MonoBehaviour
         return tiles[_coords.x,_coords.y];
     }
     public Tile[,] GetTiles(){return tiles;}
+    public List<Tile> GetUnsortedTiles()
+    {
+        List<Tile> temp = new List<Tile>();
+        foreach(Tile tile in tiles)
+        {
+            temp.Add(tile);
+        }
+        return temp;
+    }
+    public void ClearAllRooms()
+    {
+        foreach(Tile tile in tiles)
+        {
+            if(tile.type != Tile.TileType.room){continue;}
+            tile.ResetColor();
+        }
+    }
+    public void ResetGrid()
+    {
+        foreach(Tile tile in tiles)
+        {
+            if(tile.GetCoords().x == 0 || tile.GetCoords().y == 0 || tile.GetCoords().x == dimensions.x - 1 || tile.GetCoords().y == dimensions.y - 1)
+            {
+                tile.PaintTile(Color.red,Tile.TileType.Edge);
+            }
+            else
+            {
+                tile.ResetColor();
+            }
+        }
+    }
     public Vector2Int GetDimensions(){return dimensions;}
 }

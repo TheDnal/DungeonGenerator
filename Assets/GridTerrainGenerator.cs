@@ -131,12 +131,7 @@ public class GridTerrainGenerator : MonoBehaviour
     }
     private void ResetTerrain()
     {
-        Tile[,] tiles = TileGrid.instance.GetTiles();
-        Vector2Int dimensions = TileGrid.instance.GetDimensions();
-        foreach(Tile currTile in tiles)
-        {
-            currTile.ResetColor();
-        }
+        TileGrid.instance.ResetGrid();
     }
     #region PerlinSetters
     public void SetPerlinSeed(int _seed)

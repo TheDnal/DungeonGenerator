@@ -13,6 +13,11 @@ public class Tile : MonoBehaviour
     private MaterialPropertyBlock block;
     private Color currColor;
     private static Color defaultColor = Color.black;
+    private Room room;
+    public bool insideRoom()
+    {
+        return room == null ? false : true;
+    }
     public void Init(Vector2Int _coords)
     {
         coords = _coords;
@@ -20,41 +25,43 @@ public class Tile : MonoBehaviour
     public enum TileType
     {
         blank,
-        terrain
+        terrain,
+        room,
+        Edge
     }
     public TileType type = TileType.blank;
-    public List<Tile> GetNeighbours()
+    public List<Tile> GetNeighbours(bool _includeAll = false)
     {
         Neighbours = new List<Tile>();
         switch(TileGrid.instance.GetTileGridShape())
         {
             case TileGrid.TileGridShape.SQUARE:
-                AddNeighbourToList(new Vector2Int(-1,-1));
-                AddNeighbourToList( new Vector2Int(-1,0));
-                AddNeighbourToList( new Vector2Int(-1,1));
+                AddNeighbourToList(new Vector2Int(-1,-1),_includeAll);
+                AddNeighbourToList( new Vector2Int(-1,0),_includeAll);
+                AddNeighbourToList( new Vector2Int(-1,1),_includeAll);
 
-                AddNeighbourToList(new Vector2Int(0,-1));
-                AddNeighbourToList( new Vector2Int(0,1));
+                AddNeighbourToList(new Vector2Int(0,-1),_includeAll);
+                AddNeighbourToList( new Vector2Int(0,1),_includeAll);
 
-                AddNeighbourToList( new Vector2Int(1,-1));
-                AddNeighbourToList( new Vector2Int(1,0));
-                AddNeighbourToList( new Vector2Int(1,1));
+                AddNeighbourToList( new Vector2Int(1,-1),_includeAll);
+                AddNeighbourToList( new Vector2Int(1,0),_includeAll);
+                AddNeighbourToList( new Vector2Int(1,1),_includeAll);
                 break;
             case TileGrid.TileGridShape.HEX:
-                AddNeighbourToList(new Vector2Int(-1,0));
-                AddNeighbourToList(new Vector2Int(1,0));
+                AddNeighbourToList(new Vector2Int(-1,0),_includeAll);
+                AddNeighbourToList(new Vector2Int(1,0),_includeAll);
 
-                AddNeighbourToList(new Vector2Int(0,-1));
-                AddNeighbourToList(new Vector2Int(0,1));
+                AddNeighbourToList(new Vector2Int(0,-1),_includeAll);
+                AddNeighbourToList(new Vector2Int(0,1),_includeAll);
                 if(coords.y % 2 == 0)
                 {
-                    AddNeighbourToList(new Vector2Int(1,-1));
-                    AddNeighbourToList(new Vector2Int(1,1));
+                    AddNeighbourToList(new Vector2Int(1,-1),_includeAll);
+                    AddNeighbourToList(new Vector2Int(1,1),_includeAll);
                 }
                 else
                 {
-                    AddNeighbourToList(new Vector2Int(-1,1));
-                    AddNeighbourToList(new Vector2Int(-1,-1));
+                    AddNeighbourToList(new Vector2Int(-1,1),_includeAll);
+                    AddNeighbourToList(new Vector2Int(-1,-1),_includeAll);
                 }
                 break;
             default:
@@ -63,12 +70,12 @@ public class Tile : MonoBehaviour
         return Neighbours;
         //Prune list
     }
-    private void AddNeighbourToList(Vector2Int offset)
+    private void AddNeighbourToList(Vector2Int offset, bool _includeAll = false)
     {
         Vector2Int coord = coords + offset;
         Tile newTile = TileGrid.instance.GetTile(coord);
         if(newTile == null){return;}
-        if(!TileGrid.instance.highlightTerrain && newTile.type == TileType.terrain){return;}
+        if(!TileGrid.instance.highlightTerrain && newTile.type == TileType.terrain && !_includeAll){return;}
         if(Neighbours.Contains(newTile)){return;}
         Neighbours.Add(newTile);
     }
@@ -113,6 +120,8 @@ public class Tile : MonoBehaviour
     }
     public void ResetColor()
     {
+        //Check if edge
+
         type = TileType.blank;
         block = new MaterialPropertyBlock();
         this.GetComponent<Renderer>().GetPropertyBlock(block);
