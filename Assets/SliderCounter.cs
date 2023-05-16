@@ -28,7 +28,8 @@ public class SliderCounter : MonoBehaviour
         voronoiOffsetY,
 
         //Room distribution
-        Room_Count
+        Room_Count,
+        Random_Room_Placement_Seed
     }
     public enum roundDisplayType
     {
@@ -111,6 +112,9 @@ public class SliderCounter : MonoBehaviour
 
             case dataType.Room_Count:
                 RoomDistributor.instance.SetRoomCount(Mathf.RoundToInt(val));
+                break;
+            case dataType.Random_Room_Placement_Seed:
+                RoomDistributor.instance.SetSeed(Mathf.RoundToInt(val));
                 break;
         }
     }

@@ -11,7 +11,8 @@ public class RoomDistributor : MonoBehaviour
         BSP
     }
     public static RoomDistributor instance;
-    private int roomCount;
+    private int roomCount = 5;
+    private int seed = 0;
     private roomDistributionType type;
     private List<Tile> tiles = new List<Tile>();
     void Awake()
@@ -32,11 +33,14 @@ public class RoomDistributor : MonoBehaviour
     }
     public void SetRoomCount(int _count)
     {
-        Debug.Log(_count);
         roomCount = _count;
         Generate();
     }
-
+    public void SetSeed(int _seed)
+    {
+        seed = _seed;
+        Generate();
+    }
 
     private void Generate()
     {
@@ -48,7 +52,7 @@ public class RoomDistributor : MonoBehaviour
                 int successfulRooms = 0;
                 while(tiles.Count > 0 && successfulRooms != roomCount)
                 {
-                    Room newRoom = TryCreateRoom();
+                    Room newRoom = TryCreateRoom(successfulRooms);
                     if(newRoom != null){successfulRooms++;}
                 }
                 break;
@@ -58,8 +62,9 @@ public class RoomDistributor : MonoBehaviour
                 break;
         }
     }
-    private Room TryCreateRoom()
+    private Room TryCreateRoom(int _currRoomCount)
     {
+        Random.seed = seed;
         int index = Random.Range(0,tiles.Count);
         List<Tile> potentialRoom = tiles[index].GetNeighbours(true);
         potentialRoom.Add(tiles[index]);
@@ -73,7 +78,10 @@ public class RoomDistributor : MonoBehaviour
         }
         foreach(Tile tile in potentialRoom)
         {
-            tile.PaintTile(Color.grey,Tile.TileType.room);
+            float a =_currRoomCount;
+            float b = roomCount;
+            Color col = Color.Lerp(Color.white,Color.yellow, a / b);
+            tile.PaintTile(col,Tile.TileType.room);
         }
         Room newRoom = new Room(potentialRoom);
         return newRoom;

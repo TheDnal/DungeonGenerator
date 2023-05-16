@@ -54,6 +54,12 @@ public class TileGrid : MonoBehaviour
                     offset += new Vector3(tileSize/2,0,0);
                 }
                 GameObject newTile = Instantiate(_prefab,corner + offset,Quaternion.identity);
+                if(gridShape == TileGridShape.HEX)
+                {
+                    Vector3 euler = newTile.transform.eulerAngles;
+                    euler.x = -90;
+                    newTile.transform.eulerAngles = euler;
+                }
                 tiles[i,j] = newTile.GetComponent<Tile>();
                 newTile.GetComponent<Tile>().Init(new Vector2Int(i,j));
                 newTile.GetComponent<Tile>().ResetColor();

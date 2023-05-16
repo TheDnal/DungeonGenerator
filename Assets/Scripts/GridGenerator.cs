@@ -7,7 +7,7 @@ public class GridGenerator : MonoBehaviour
     public Vector3 gridCentre;
     public Vector2Int gridDimensions;
     public float tileDimensions;
-    public GameObject squareTilePrefab;
+    public GameObject squareTilePrefab, hexTilePrefab;
     public TileGrid.TileGridShape gridShape = TileGrid.TileGridShape.SQUARE;
     public static GridGenerator instance;
     void Awake()
@@ -24,8 +24,15 @@ public class GridGenerator : MonoBehaviour
     }
     public void GenerateGrid()
     {
-        
-        TileGrid.instance.Initialise(gridCentre,gridDimensions,squareTilePrefab,tileDimensions,gridShape);
+        switch(gridShape)
+        {
+            case TileGrid.TileGridShape.SQUARE:
+                TileGrid.instance.Initialise(gridCentre,gridDimensions,squareTilePrefab,tileDimensions,gridShape);
+                break;
+            case TileGrid.TileGridShape.HEX:
+                TileGrid.instance.Initialise(gridCentre,gridDimensions,hexTilePrefab,tileDimensions,gridShape);
+                break;
+        }
     }
     public void SetHeight(int _height)
     {
