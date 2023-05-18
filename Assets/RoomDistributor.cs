@@ -70,7 +70,7 @@ public class RoomDistributor : MonoBehaviour
         potentialRoom.Add(tiles[index]);
         foreach(Tile tile in potentialRoom)
         {
-            if(tile.type == Tile.TileType.terrain || tile.type == Tile.TileType.room || tile.type == Tile.TileType.Edge)
+            if(tile.type != Tile.TileType.blank)
             {
                 RemoveTilesFromCache(potentialRoom);
                 return null;
@@ -81,7 +81,7 @@ public class RoomDistributor : MonoBehaviour
             float a =_currRoomCount;
             float b = roomCount;
             Color col = Color.Lerp(Color.white,Color.yellow, a / b);
-            tile.PaintTile(col,Tile.TileType.room);
+            tile.PaintTile(Tile.TileType.room);
         }
         Room newRoom = new Room(potentialRoom);
         return newRoom;

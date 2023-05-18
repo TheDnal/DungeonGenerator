@@ -65,7 +65,7 @@ public class TileGrid : MonoBehaviour
                 newTile.GetComponent<Tile>().ResetColor();
                 if(i == 0 || j == 0 || i == dimensions.x - 1 || j == dimensions.y - 1)
                 {
-                    newTile.GetComponent<Tile>().PaintTile(Color.red,Tile.TileType.Edge);
+                    newTile.GetComponent<Tile>().PaintTile(Tile.TileType.Edge);
                 }
             }
         }
@@ -100,7 +100,7 @@ public class TileGrid : MonoBehaviour
         {
             if(tile.GetCoords().x == 0 || tile.GetCoords().y == 0 || tile.GetCoords().x == dimensions.x - 1 || tile.GetCoords().y == dimensions.y - 1)
             {
-                tile.PaintTile(Color.red,Tile.TileType.Edge);
+                tile.PaintTile(Tile.TileType.Edge);
             }
             else
             {

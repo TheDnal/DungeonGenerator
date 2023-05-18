@@ -82,3 +82,18 @@ As terrain is mostly completed, work will now move onto room distribution.
 Known bugs :
     - Hex grid does not interact correctly with voronoi distance calculations.
         - the grid script should control calculations for distances between nodes
+
+16/05/23
+Basic room placement
+    - Rooms can now be generated onto blank tiles. This can use 3 different techniques
+        - Accretion (not implemented)
+        - Binary space partitioning (not implemented)
+        - Random placement (Implemented)
+    - Hex tiles now have the correct hexagonal-prism model
+
+18/05/23
+Colors updated
+    - Simplified color schemes to make generation more obvious
+        - Terrain now makes tiles invisble
+        - Rooms are white
+    - Fixed spacing for tiles, as the square and hexagonal tiles had slightly different measurements. This caused seams to appear.

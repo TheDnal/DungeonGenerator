@@ -77,7 +77,7 @@ public class GridTerrainGenerator : MonoBehaviour
             float chance = UnityEngine.Random.Range(0,100);
             if(chance <= rndChance * 100)
             {
-                currTile.PaintTile(Color.red, Tile.TileType.terrain);
+                currTile.PaintTile(Tile.TileType.hidden);
             }
         }
     }
@@ -97,7 +97,7 @@ public class GridTerrainGenerator : MonoBehaviour
                 float val = Mathf.PerlinNoise(sampleX,sampleY);
                 if(val <= threshold)
                 {
-                    tiles[x,y].PaintTile(Color.red,Tile.TileType.terrain);
+                    tiles[x,y].PaintTile(Tile.TileType.hidden);
                 }
             }
         }
@@ -122,7 +122,7 @@ public class GridTerrainGenerator : MonoBehaviour
                     float distance = Vector2.Distance(point, new Vector2(x + voronoiOffset.x,y + voronoiOffset.y));
                     if(distance <= voronoiRadius)
                     {
-                        tiles[x,y].PaintTile(Color.red,Tile.TileType.terrain);
+                        tiles[x,y].PaintTile(Tile.TileType.hidden);
                         break;
                     }
                 }

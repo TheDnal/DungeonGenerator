@@ -12,7 +12,11 @@ public class Tile : MonoBehaviour
     private List<Tile> Neighbours = new List<Tile>();
     private MaterialPropertyBlock block;
     private Color currColor;
-    private static Color defaultColor = Color.black;
+    private static Color defaultColor = Color.grey;
+    public static Color terrainColor = Color.black;
+    public static Color roomColor = Color.white;
+    public static Color edgeColor = Color.black;
+
     private Room room;
     public bool insideRoom()
     {
@@ -27,7 +31,8 @@ public class Tile : MonoBehaviour
         blank,
         terrain,
         room,
-        Edge
+        Edge,
+        hidden
     }
     public TileType type = TileType.blank;
     public List<Tile> GetNeighbours(bool _includeAll = false)
@@ -109,19 +114,50 @@ public class Tile : MonoBehaviour
         }
         HighlightTile(false);
     }
-    public void PaintTile(Color _paintColor, TileType _type)
+    public void PaintTile(TileType _type)
     {
+        if(type == TileType.Edge){return;}
+        this.GetComponent<Renderer>().enabled = true;
+        Vector3 pos = transform.position;
+        Color col = defaultColor;
+        switch(_type)
+        {
+            case TileType.blank:
+                pos.y = 0;
+                col = defaultColor;
+                break;
+            case TileType.terrain:
+                pos.y = 1;
+                col = terrainColor;
+                break;
+            case TileType.room:
+                pos.y = .5f;
+                col = roomColor;
+                break;
+            case TileType.Edge:
+                pos.y = 1;
+                col = edgeColor;
+                break;
+            case TileType.hidden:
+                pos.y = 0;
+                this.GetComponent<Renderer>().enabled = false;
+                break;
+        }
+        transform.position = pos;
         type = _type;
         block = new MaterialPropertyBlock();
         this.GetComponent<Renderer>().GetPropertyBlock(block);
-        block.SetColor("_BaseColor", _paintColor);
-        currColor = _paintColor;
+        block.SetColor("_BaseColor", col);
+        currColor = col;
         this.GetComponent<Renderer>().SetPropertyBlock(block);
     }
     public void ResetColor()
     {
+        this.GetComponent<Renderer>().enabled = true;
         //Check if edge
-
+        Vector3 pos = transform.position;
+        pos.y = 0;
+        transform.position = pos;
         type = TileType.blank;
         block = new MaterialPropertyBlock();
         this.GetComponent<Renderer>().GetPropertyBlock(block);
