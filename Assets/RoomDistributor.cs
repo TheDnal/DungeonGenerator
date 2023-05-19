@@ -78,11 +78,12 @@ public class RoomDistributor : MonoBehaviour
         }
         foreach(Tile tile in potentialRoom)
         {
-            float a =_currRoomCount;
-            float b = roomCount;
-            Color col = Color.Lerp(Color.white,Color.yellow, a / b);
-            tile.PaintTile(Tile.TileType.room);
+            // float a =_currRoomCount;
+            // float b = roomCount;
+            // Color col = Color.Lerp(Color.white,Color.yellow, a / b);
+            // tile.PaintTile(Tile.TileType.room);
         }
+        tiles[index].PaintTile(Tile.TileType.room);
         Room newRoom = new Room(potentialRoom);
         return newRoom;
     }

@@ -35,6 +35,18 @@ public class Tile : MonoBehaviour
         hidden
     }
     public TileType type = TileType.blank;
+    public static float GetDistance(Tile a,Tile b, TileGrid.TileGridShape _shape)
+    {
+        if(_shape == TileGrid.TileGridShape.SQUARE)
+        {
+            return Vector2.Distance(a.coords,b.coords);
+        }
+        //Figure out if either tile is offset
+        Vector2 aHexCoord,bHexCoord;
+        aHexCoord = new Vector2(a.transform.position.x,a.transform.position.z);
+        bHexCoord = new Vector2(b.transform.position.x,b.transform.position.z);
+        return Vector2.Distance(aHexCoord,bHexCoord);
+    }
     public List<Tile> GetNeighbours(bool _includeAll = false)
     {
         Neighbours = new List<Tile>();
