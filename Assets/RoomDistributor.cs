@@ -15,6 +15,7 @@ public class RoomDistributor : MonoBehaviour
     private int seed = 0;
     private roomDistributionType type;
     private List<Tile> tiles = new List<Tile>();
+    private List<Tile> roomCentres = new List<Tile>();
     void Awake()
     {
         if(instance != null)
@@ -41,28 +42,41 @@ public class RoomDistributor : MonoBehaviour
         seed = _seed;
         Generate();
     }
-
+    public List<Tile> GetRoomCentres(){return roomCentres;}
     private void Generate()
     {
         TileGrid.instance.ClearAllRooms();
         tiles = TileGrid.instance.GetUnsortedTiles();
+        roomCentres.Clear();
         switch(type)
         {
             case roomDistributionType.RANDOM:
                 int successfulRooms = 0;
                 while(tiles.Count > 0 && successfulRooms != roomCount)
                 {
-                    Room newRoom = TryCreateRoom(successfulRooms);
-                    if(newRoom != null){successfulRooms++;}
+                    Tile newRoomCentre = TryCreateRoomCentre(successfulRooms);
+                    if(newRoomCentre != null)
+                    {
+                        roomCentres.Add(newRoomCentre);
+                        successfulRooms++;
+                    }
+
                 }
                 break;
             case roomDistributionType.ACCRETION:
                 break;
             case roomDistributionType.BSP:
+                PartitionAxes newAxis = new PartitionAxes(Vector2.up * 10, true);
+                Partition p = new Partition(null,null,newAxis);
+                List<Tile> partitionTiles = p.GetTilesInParitition();
+                foreach(Tile tile in partitionTiles)
+                {
+                    tile.PaintTile(Tile.TileType.room);
+                }
                 break;
         }
     }
-    private Room TryCreateRoom(int _currRoomCount)
+    private Tile TryCreateRoomCentre(int _currRoomCount)
     {
         Random.seed = seed;
         int index = Random.Range(0,tiles.Count);
@@ -76,16 +90,19 @@ public class RoomDistributor : MonoBehaviour
                 return null;
             }
         }
-        foreach(Tile tile in potentialRoom)
-        {
-            // float a =_currRoomCount;
-            // float b = roomCount;
-            // Color col = Color.Lerp(Color.white,Color.yellow, a / b);
-            // tile.PaintTile(Tile.TileType.room);
-        }
+        // foreach(Tile tile in potentialRoom)
+        // {
+        //     // float a =_currRoomCount;
+        //     // float b = roomCount;
+        //     // Color col = Color.Lerp(Color.white,Color.yellow, a / b);
+        //     // tile.PaintTile(Tile.TileType.room);
+        // }
         tiles[index].PaintTile(Tile.TileType.room);
-        Room newRoom = new Room(potentialRoom);
-        return newRoom;
+        return tiles[index];
+    }
+    private Partition GenerateBinarySpacialPartition()
+    {
+        return null;
     }
     private void RemoveTilesFromCache(List<Tile> _tilesToRemove)
     {
@@ -96,22 +113,75 @@ public class RoomDistributor : MonoBehaviour
         }
     }
 }
-public class Room
+public class Partition
 {
-    public List<Tile> tiles = new List<Tile>();
-    private List<Room> connectedRooms = new List<Room>();
-    public Room(List<Tile> _tiles)
+    public Partition parentPartition = null;
+    public List<Partition> childPartitions = new List<Partition>();
+    public PartitionAxes partitionAxes;
+    public Partition(Partition _parent, List<Partition> _children, PartitionAxes _partitionAxes)
     {
-        tiles = _tiles;
+        parentPartition = _parent;
+        childPartitions = _children;
+        if(childPartitions != null)
+        {
+            if(childPartitions.Count > 0)
+            {
+                foreach(Partition p in childPartitions)
+                {
+                    p.parentPartition = this;
+                }
+            }
+        }
+        partitionAxes = _partitionAxes;
     }
-    public void ConnectRoom(Room _room)
+    public List<Tile> GetTilesInParitition()
     {
-        if(connectedRooms.Contains(_room)){return;}
-        connectedRooms.Add(_room);
+        //Get all division axes from parent
+        List<PartitionAxes> divisionAxes = new List<PartitionAxes>();
+        divisionAxes.Add(partitionAxes);
+        Partition currPartition = this;
+        Partition parent = currPartition.parentPartition;
+        while(parent != null)
+        {
+            divisionAxes.Add(parent.partitionAxes);
+            parent = parent.parentPartition;
+        }
+        Tile[,] tiles = TileGrid.instance.GetTiles();
+        List<Tile> validTiles = new List<Tile>();
+        foreach(Tile tile in tiles)
+        {
+            bool isValid = true;
+            foreach(PartitionAxes _axes in divisionAxes)
+            {
+                if(!TileWithinAxes(tile.GetCoords(),_axes.greaterThanAxis,_axes.axis)){isValid = false;}
+            }
+            if(isValid){validTiles.Add(tile);}
+        }
+        return validTiles;
     }
-    public void DisconnectRoom(Room _room)
+    private bool TileWithinAxes(Vector2Int _coords, bool _greaterThanAxis, Vector2 _axes)
     {
-        if(!connectedRooms.Contains(_room)){return;}
-        connectedRooms.Remove(_room);
+        int x = _coords.x;
+        int y = _coords.y;
+        if(_greaterThanAxis)
+        {
+            if(x < _axes.x || y < _axes.y){return false;}
+            return true;
+        }
+        else
+        {
+            if(x > _axes.x || y > _axes.y){return false;}
+            return true;
+        }
+    }
+}
+public struct PartitionAxes
+{
+    public bool greaterThanAxis;
+    public Vector2 axis;
+    public PartitionAxes(Vector2 _axis, bool _greaterThanAxis)
+    {
+        axis = _axis;
+        greaterThanAxis = _greaterThanAxis;
     }
 }

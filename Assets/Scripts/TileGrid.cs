@@ -8,6 +8,7 @@ public class TileGrid : MonoBehaviour
     private Tile[,] tiles;
     private Vector2Int dimensions;
     public bool highlightTerrain = false;
+    public int highlightRadius;
     public enum TileGridShape
     {
         SQUARE,
@@ -85,6 +86,29 @@ public class TileGrid : MonoBehaviour
             temp.Add(tile);
         }
         return temp;
+    }
+    public List<Tile> GetTilesWithinDistance(Vector2Int _coords, float _maxDistance)
+    {
+        if(_coords.x < 0 || _coords.y < 0 || _coords.x >= dimensions.x || _coords.y >= dimensions.y){return null;}
+        List<Tile> nearbyTiles = new List<Tile>();
+        foreach(Tile tile in tiles)
+        {
+            //If one coord value is larger than the other, use that as the distance, otherwise the sum of the two values
+            int x,y;
+            float distance;
+            Vector2Int relativeCoords = tile.GetCoords() - _coords;
+            x = Mathf.Abs(relativeCoords.x);
+            y = Mathf.Abs(relativeCoords.y);
+            if(x > y) {distance = x;}
+            else if(x < y) {distance = y;}
+            else
+            {
+                if(x == _maxDistance){distance = _maxDistance + 1;}
+                else{distance = x;}
+            }
+            if(distance <= _maxDistance){nearbyTiles.Add(tile);}
+        }
+        return nearbyTiles;
     }
     public void ClearAllRooms()
     {

@@ -47,44 +47,73 @@ public class Tile : MonoBehaviour
         bHexCoord = new Vector2(b.transform.position.x,b.transform.position.z);
         return Vector2.Distance(aHexCoord,bHexCoord);
     }
-    public List<Tile> GetNeighbours(bool _includeAll = false)
+    public List<Tile> GetNeighbours(bool _includeAll = false, int _radius = 1)
     {
         Neighbours = new List<Tile>();
-        switch(TileGrid.instance.GetTileGridShape())
-        {
-            case TileGrid.TileGridShape.SQUARE:
-                AddNeighbourToList(new Vector2Int(-1,-1),_includeAll);
-                AddNeighbourToList( new Vector2Int(-1,0),_includeAll);
-                AddNeighbourToList( new Vector2Int(-1,1),_includeAll);
-
-                AddNeighbourToList(new Vector2Int(0,-1),_includeAll);
-                AddNeighbourToList( new Vector2Int(0,1),_includeAll);
-
-                AddNeighbourToList( new Vector2Int(1,-1),_includeAll);
-                AddNeighbourToList( new Vector2Int(1,0),_includeAll);
-                AddNeighbourToList( new Vector2Int(1,1),_includeAll);
-                break;
-            case TileGrid.TileGridShape.HEX:
-                AddNeighbourToList(new Vector2Int(-1,0),_includeAll);
-                AddNeighbourToList(new Vector2Int(1,0),_includeAll);
-
-                AddNeighbourToList(new Vector2Int(0,-1),_includeAll);
-                AddNeighbourToList(new Vector2Int(0,1),_includeAll);
-                if(coords.y % 2 == 0)
+        Vector2Int searchCorner = new Vector2Int(coords.x - _radius, coords.y - _radius);
+        int diameter = (_radius * 2) + 1;
+        for(int i = 0; i < diameter; i++){
+            for(int j = 0; j < diameter; j++)
+            {
+                Vector2Int coord;
+                if(TileGrid.instance.GetTileGridShape() == TileGrid.TileGridShape.SQUARE)
                 {
-                    AddNeighbourToList(new Vector2Int(1,-1),_includeAll);
-                    AddNeighbourToList(new Vector2Int(1,1),_includeAll);
+                    coord = searchCorner + new Vector2Int(i,j);
                 }
                 else
                 {
-                    AddNeighbourToList(new Vector2Int(-1,1),_includeAll);
-                    AddNeighbourToList(new Vector2Int(-1,-1),_includeAll);
+                    if(j % 2 == 0)//Even
+                    {
+                        coord = coord = searchCorner + new Vector2Int(i,j);
+                    }   
+                    else//Odd
+                    {
+                        coord = searchCorner + new Vector2Int(i - 1, j);
+                    }
                 }
-                break;
-            default:
-                break;
+                Tile neighbourTile = TileGrid.instance.GetTile(coord);
+                if(neighbourTile == null){continue;}
+                if(neighbourTile.type != TileType.blank && !_includeAll){continue;}
+                if(neighbourTile == this){continue;}
+                Neighbours.Add(neighbourTile);
+            }
         }
         return Neighbours;
+        // switch(TileGrid.instance.GetTileGridShape())
+        // {
+        //     case TileGrid.TileGridShape.SQUARE:
+        //         AddNeighbourToList(new Vector2Int(-1,-1),_includeAll);
+        //         AddNeighbourToList( new Vector2Int(-1,0),_includeAll);
+        //         AddNeighbourToList( new Vector2Int(-1,1),_includeAll);
+
+        //         AddNeighbourToList(new Vector2Int(0,-1),_includeAll);
+        //         AddNeighbourToList( new Vector2Int(0,1),_includeAll);
+
+        //         AddNeighbourToList( new Vector2Int(1,-1),_includeAll);
+        //         AddNeighbourToList( new Vector2Int(1,0),_includeAll);
+        //         AddNeighbourToList( new Vector2Int(1,1),_includeAll);
+        //         break;
+        //     case TileGrid.TileGridShape.HEX:
+        //         AddNeighbourToList(new Vector2Int(-1,0),_includeAll);
+        //         AddNeighbourToList(new Vector2Int(1,0),_includeAll);
+
+        //         AddNeighbourToList(new Vector2Int(0,-1),_includeAll);
+        //         AddNeighbourToList(new Vector2Int(0,1),_includeAll);
+        //         if(coords.y % 2 == 0)
+        //         {
+        //             AddNeighbourToList(new Vector2Int(1,-1),_includeAll);
+        //             AddNeighbourToList(new Vector2Int(1,1),_includeAll);
+        //         }
+        //         else
+        //         {
+        //             AddNeighbourToList(new Vector2Int(-1,1),_includeAll);
+        //             AddNeighbourToList(new Vector2Int(-1,-1),_includeAll);
+        //         }
+        //         break;
+        //     default:
+        //         break;
+        // }
+        // return Neighbours;
         //Prune list
     }
     private void AddNeighbourToList(Vector2Int offset, bool _includeAll = false)
@@ -112,7 +141,7 @@ public class Tile : MonoBehaviour
             {
                 HighlightTile(true);
             }
-            foreach(Tile tile in GetNeighbours())
+            foreach(Tile tile in TileGrid.instance.GetTilesWithinDistance(coords,TileGrid.instance.highlightRadius))
             {
                 tile.HighlightTile(true);
             }
@@ -120,7 +149,7 @@ public class Tile : MonoBehaviour
     }
     void OnMouseUp()
     {
-        foreach(Tile tile in GetNeighbours())
+        foreach(Tile tile in TileGrid.instance.GetTilesWithinDistance(coords,TileGrid.instance.highlightRadius))
         {
             tile.HighlightTile(false);
         }

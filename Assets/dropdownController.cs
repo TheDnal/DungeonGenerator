@@ -8,7 +8,8 @@ public class dropdownController : MonoBehaviour
     {
         GridShape,
         TerrainType,
-        roomDistributionType
+        RoomDistributionType,
+        RoomShapeType
     }
     public dropdownType type = dropdownType.GridShape;
     public SubMenuController subMenu;
@@ -23,8 +24,11 @@ public class dropdownController : MonoBehaviour
             case dropdownType.TerrainType:
                 GridTerrainGenerator.instance.SetTerrainType(index);
                 break;
-            case dropdownType.roomDistributionType:
+            case dropdownType.RoomDistributionType:
                 RoomDistributor.instance.SetDistributionType(index);
+                break;
+            case dropdownType.RoomShapeType:
+                RoomShapeGenerator.instance.SetRoomShape(index);
                 break;
         }
         if(subMenu == null){return;}

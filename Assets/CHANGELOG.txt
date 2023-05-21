@@ -97,3 +97,23 @@ Colors updated
         - Terrain now makes tiles invisble
         - Rooms are white
     - Fixed spacing for tiles, as the square and hexagonal tiles had slightly different measurements. This caused seams to appear.
+
+20/05/23
+Revised plan for dungeon generation;
+	- Step A) Grid settings
+	- Step B) Grid Terrain
+	- Step C) Room positioning
+	- Step D) Room Shapes
+	- Step E) Details
+A and B are the same as before, step C is about finding the starting tile that
+a room can be generated from (Controlled by step D), as well as what other rooms
+it will be connected to. Step D will focus solely on room shape, i.e. ; 
+Cellular automata, squares, rectangles, circles, blobs etc. It will also focus on
+what the maximum size a room can be. Step E will focus on 
+corridors, details such as erosion and bodies of water, room merging etc.
+
+21/05/23
+Made start on BSP room positioning. Room size can now be set in the room Shapes
+page. Only works on square grids however. Calculating nearby tiles on hex grid is broken
+and im worried i'll have to develop a new coordinate system for the hex grid as the current
+one is causing issues
