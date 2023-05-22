@@ -8514,6 +8514,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   roomSize: 1
+  corridorSeed: 0
 --- !u!1 &374550970
 GameObject:
   m_ObjectHideFlags: 0
@@ -21357,7 +21358,7 @@ MonoBehaviour:
   roundingType: 0
   sliderType: 0
   min: 0
-  max: 50
+  max: 100
   counter: {fileID: 1677462085}
 --- !u!1 &1111994316
 GameObject:
@@ -22921,7 +22922,7 @@ MonoBehaviour:
   roundingType: 0
   sliderType: 1
   min: 0
-  max: 50
+  max: 100
   counter: {fileID: 2040948736}
 --- !u!1 &1198546439
 GameObject:
@@ -30711,7 +30712,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: 25
+  m_text: 50
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -37592,7 +37593,9 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: 25
+  m_text: '50
+
+'
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}

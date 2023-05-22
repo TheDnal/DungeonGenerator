@@ -87,7 +87,6 @@ public class RoomShapeGenerator : MonoBehaviour
             if(room.GetConnectedRooms().Count < 1){continue;}
             foreach(Room _connectedRoom in room.GetConnectedRooms())
             {
-                Debug.Log("generating corridor");
                 height = _connectedRoom.rootTile.GetCoords().y - 
                          room.rootTile.GetCoords().y;
                 width = _connectedRoom.rootTile.GetCoords().x -

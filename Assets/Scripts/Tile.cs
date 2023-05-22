@@ -186,7 +186,7 @@ public class Tile : MonoBehaviour
                 this.GetComponent<Renderer>().enabled = false;
                 break;
             case TileType.Corridor:
-                pos.y = 0;
+                pos.y = 0.5f;
                 col = corridorColor;
                 break;
         }
