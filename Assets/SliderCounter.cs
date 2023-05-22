@@ -29,7 +29,10 @@ public class SliderCounter : MonoBehaviour
 
         //Room distribution
         Room_Count,
-        Random_Room_Placement_Seed
+        Random_Room_Placement_Seed,
+
+        //Room Shapes
+        Room_Size
     }
     public enum roundDisplayType
     {
@@ -115,6 +118,10 @@ public class SliderCounter : MonoBehaviour
                 break;
             case dataType.Random_Room_Placement_Seed:
                 RoomDistributor.instance.SetSeed(Mathf.RoundToInt(val));
+                break;
+
+            case dataType.Room_Size:
+                RoomShapeGenerator.instance.SetRoomSize(Mathf.RoundToInt(val));
                 break;
         }
     }

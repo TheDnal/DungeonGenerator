@@ -117,3 +117,7 @@ Made start on BSP room positioning. Room size can now be set in the room Shapes
 page. Only works on square grids however. Calculating nearby tiles on hex grid is broken
 and im worried i'll have to develop a new coordinate system for the hex grid as the current
 one is causing issues
+
+22/05/23
+Hex grids put on hold until rest of project completed. Room shape and size completed,
+besides random and CA shapes. Work started on generating corridors.

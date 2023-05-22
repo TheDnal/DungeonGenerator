@@ -16,6 +16,7 @@ public class RoomDistributor : MonoBehaviour
     private roomDistributionType type;
     private List<Tile> tiles = new List<Tile>();
     private List<Tile> roomCentres = new List<Tile>();
+    private List<Room> rooms = new List<Room>();
     void Awake()
     {
         if(instance != null)
@@ -43,11 +44,13 @@ public class RoomDistributor : MonoBehaviour
         Generate();
     }
     public List<Tile> GetRoomCentres(){return roomCentres;}
+    public List<Room> GetRooms(){return rooms;}
     private void Generate()
     {
         TileGrid.instance.ClearAllRooms();
         tiles = TileGrid.instance.GetUnsortedTiles();
         roomCentres.Clear();
+        rooms.Clear();
         switch(type)
         {
             case roomDistributionType.RANDOM:
@@ -58,6 +61,12 @@ public class RoomDistributor : MonoBehaviour
                     if(newRoomCentre != null)
                     {
                         roomCentres.Add(newRoomCentre);
+                        Room newRoom = new Room(newRoomCentre);
+                        rooms.Add(newRoom);
+                        if(successfulRooms > 0)
+                        {
+                            newRoom.ConnectRoom(rooms[successfulRooms - 1]);
+                        }
                         successfulRooms++;
                     }
 
@@ -74,6 +83,20 @@ public class RoomDistributor : MonoBehaviour
                     tile.PaintTile(Tile.TileType.room);
                 }
                 break;
+        }
+    }
+    void OnDrawGizmos()
+    {
+        if(rooms == null){return;}
+        if(rooms.Count < 1){return;}
+        foreach(Room currRoom in rooms)
+        {
+            if(currRoom.GetConnectedRooms().Count < 1){continue;}
+            foreach(Room connectedRoom in currRoom.GetConnectedRooms())
+            {
+                Gizmos.color = Color.red;
+                Gizmos.DrawLine(currRoom.rootTile.transform.position,connectedRoom.rootTile.transform.position);
+            }
         }
     }
     private Tile TryCreateRoomCentre(int _currRoomCount)
@@ -113,6 +136,7 @@ public class RoomDistributor : MonoBehaviour
         }
     }
 }
+
 public class Partition
 {
     public Partition parentPartition = null;
@@ -183,5 +207,39 @@ public struct PartitionAxes
     {
         axis = _axis;
         greaterThanAxis = _greaterThanAxis;
+    }
+}
+
+public class Room
+{
+    public List<Tile> tiles = new List<Tile>();
+    private List<Room> connectedRooms = new List<Room>();
+    public Tile rootTile;
+    public Room(Tile _rootTile)
+    {
+        rootTile = _rootTile;
+    }
+    public void AddTiles(List<Tile> _tiles)
+    {
+        foreach(Tile tile in _tiles)
+        {
+            if(tiles.Contains(tile)){continue;}
+            tiles.Add(tile);
+        }
+    }
+    public void ConnectRoom(Room _room)
+    {
+        if(_room == this){Debug.Log("Error : Attempted room self connect"); return;}
+        if(connectedRooms.Contains(_room)){return;}
+        connectedRooms.Add(_room);
+    }
+    public void DisconnectRoom(Room _room)
+    {
+        if(!connectedRooms.Contains(_room)){return;}
+        connectedRooms.Remove(_room);
+    }
+    public List<Room> GetConnectedRooms()
+    {
+        return connectedRooms;
     }
 }

@@ -16,6 +16,7 @@ public class Tile : MonoBehaviour
     public static Color terrainColor = Color.black;
     public static Color roomColor = Color.white;
     public static Color edgeColor = Color.black;
+    public static Color corridorColor = Color.white;
 
     private Room room;
     public bool insideRoom()
@@ -32,7 +33,8 @@ public class Tile : MonoBehaviour
         terrain,
         room,
         Edge,
-        hidden
+        hidden,
+        Corridor
     }
     public TileType type = TileType.blank;
     public static float GetDistance(Tile a,Tile b, TileGrid.TileGridShape _shape)
@@ -182,6 +184,10 @@ public class Tile : MonoBehaviour
             case TileType.hidden:
                 pos.y = 0;
                 this.GetComponent<Renderer>().enabled = false;
+                break;
+            case TileType.Corridor:
+                pos.y = 0;
+                col = corridorColor;
                 break;
         }
         transform.position = pos;

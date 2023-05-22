@@ -87,6 +87,19 @@ public class TileGrid : MonoBehaviour
         }
         return temp;
     }
+    public List<Tile> GetTilesInRegion(Vector2Int _corner, Vector2Int _dimensions)
+    {
+        if(_dimensions.x >= dimensions.x || _dimensions.y >= dimensions.y){return null;}
+        List<Tile> temp = new List<Tile>();
+        for(int i = 0; i < _dimensions.x; i++){
+            for(int j = 0; j < _dimensions.y; j++)
+            {
+                if(_corner.x + i < 0 || _corner.y + j < 0 || _corner.x + i >= dimensions.x || _corner.y + j >= dimensions.y){continue;}
+                temp.Add(tiles[_corner.x + i, _corner.y + j]);
+            }
+        }
+        return temp;
+    }
     public List<Tile> GetTilesWithinDistance(Vector2Int _coords, float _maxDistance)
     {
         if(_coords.x < 0 || _coords.y < 0 || _coords.x >= dimensions.x || _coords.y >= dimensions.y){return null;}
@@ -117,6 +130,7 @@ public class TileGrid : MonoBehaviour
             if(tile.type != Tile.TileType.room){continue;}
             tile.ResetColor();
         }
+        GridTerrainGenerator.instance.GenerateTerrain();
     }
     public void ResetGrid()
     {
