@@ -121,3 +121,8 @@ one is causing issues
 22/05/23
 Hex grids put on hold until rest of project completed. Room shape and size completed,
 besides random and CA shapes. Work started on generating corridors.
+
+23/05/23
+Room accretion and corridors completed. Rooms can now be toggled to not generate 
+over terrain which makes cool looking rooms. Its starting to come together now which is
+exciting

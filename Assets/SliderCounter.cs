@@ -30,9 +30,11 @@ public class SliderCounter : MonoBehaviour
         //Room distribution
         Room_Count,
         Random_Room_Placement_Seed,
-
+        Accretion_Min_Range,
+        Accretion_Max_Range,
         //Room Shapes
-        Room_Size
+        Room_Size,
+        CanGenerateRoomsOverTerrain
     }
     public enum roundDisplayType
     {
@@ -60,7 +62,10 @@ public class SliderCounter : MonoBehaviour
                 val = Mathf.Round(val * 100) / 100;
                 break;
         }
-        counter.text = val.ToString();
+        if(counter != null)
+        {
+            counter.text = val.ToString();
+        }
         switch(sliderType)
         {
 
@@ -119,9 +124,18 @@ public class SliderCounter : MonoBehaviour
             case dataType.Random_Room_Placement_Seed:
                 RoomDistributor.instance.SetSeed(Mathf.RoundToInt(val));
                 break;
-
+            case dataType.Accretion_Min_Range:
+                RoomDistributor.instance.SetAccretionMinRange(Mathf.RoundToInt(val));
+                break;
+            case dataType.Accretion_Max_Range:
+                RoomDistributor.instance.SetAccretionMaxRange(Mathf.RoundToInt(val));
+                break;
             case dataType.Room_Size:
                 RoomShapeGenerator.instance.SetRoomSize(Mathf.RoundToInt(val));
+                break;
+            case dataType.CanGenerateRoomsOverTerrain:
+                bool b = Mathf.RoundToInt(val) > 0 ? true : false;
+                RoomShapeGenerator.instance.SetRoomsCanGenerateOverTerrain(b);
                 break;
         }
     }

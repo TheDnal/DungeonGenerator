@@ -127,7 +127,7 @@ public class TileGrid : MonoBehaviour
     {
         foreach(Tile tile in tiles)
         {
-            if(tile.type != Tile.TileType.room){continue;}
+            if(tile.type != Tile.TileType.room && tile.type != Tile.TileType.Corridor){continue;}
             tile.ResetColor();
         }
         GridTerrainGenerator.instance.GenerateTerrain();
