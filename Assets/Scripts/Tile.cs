@@ -17,7 +17,11 @@ public class Tile : MonoBehaviour
     public static Color roomColor = Color.white;
     public static Color edgeColor = Color.black;
     public static Color corridorColor = Color.white;
-
+    public static float defaultVarience = 0;
+    public static float terrainVarience = 0;
+    public static float roomVarience = 0;
+    public static float edgeVarience = 0;
+    public static float corridorVarience = 0;
     private Room room;
     public enum TileType
     {
@@ -29,28 +33,32 @@ public class Tile : MonoBehaviour
         Corridor
     }
     public TileType type = TileType.blank;
-    public static void SetColor(int _typeIndex)
+    public static void SetColor(int _typeIndex, float _varience = 0)
     {
         Color col = ColorPickerControl.instance.GetColor(); //Get col from color picker
-        Debug.Log("Color set to : " + col);
         switch((TileType)_typeIndex)
         {
             case TileType.blank:
                 defaultColor = col;
+                defaultVarience = _varience;
                 break;
             case TileType.terrain:
                 terrainColor = col;
+                terrainVarience = _varience;
                 break;
             case TileType.room:
                 roomColor = col;
+                roomVarience = _varience;
                 break;
             case TileType.Edge:
                 edgeColor = col;
+                edgeVarience = _varience;
                 break;
             case TileType.hidden:
                 break;
             case TileType.Corridor:
                 corridorColor = col;
+                corridorVarience = _varience;
                 break;
             default:
                 break;
@@ -212,32 +220,42 @@ public class Tile : MonoBehaviour
         this.GetComponent<Renderer>().enabled = true;
         Vector3 pos = transform.position;
         Color col = defaultColor;
+        float varience = 0;
         switch(_type)
         {
             case TileType.blank:
                 pos.y = 0;
                 col = defaultColor;
+                varience = defaultVarience;
                 break;
             case TileType.terrain:
-                pos.y = 1;
+                pos.y = 0;
                 col = terrainColor;
+                varience = terrainVarience;
                 break;
             case TileType.room:
-                pos.y = .5f;
+                pos.y = .0f;
                 col = roomColor;
+                varience = roomVarience;
                 break;
             case TileType.Edge:
                 pos.y = 1;
                 col = edgeColor;
+                varience = edgeVarience;
                 break;
             case TileType.hidden:
                 pos.y = 0;
                 this.GetComponent<Renderer>().enabled = false;
                 break;
             case TileType.Corridor:
-                pos.y = 0.5f;
+                pos.y = 0.0f;
                 col = corridorColor;
+                varience = corridorVarience;
                 break;
+        }
+        if(varience != 0)
+        {
+            col *= Random.Range(1 - varience, 1 + varience);
         }
         transform.position = pos;
         type = _type;
@@ -245,6 +263,13 @@ public class Tile : MonoBehaviour
         this.GetComponent<Renderer>().GetPropertyBlock(block);
         block.SetColor("_BaseColor", col);
         currColor = col;
+        this.GetComponent<Renderer>().SetPropertyBlock(block);
+    }
+    public void TempSetColor(Color col)
+    {
+        block = new MaterialPropertyBlock();
+        this.GetComponent<Renderer>().GetPropertyBlock(block);
+        block.SetColor("_BaseColor", col);
         this.GetComponent<Renderer>().SetPropertyBlock(block);
     }
     public void ResetColor()

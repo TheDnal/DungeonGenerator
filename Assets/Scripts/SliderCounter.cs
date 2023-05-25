@@ -26,7 +26,7 @@ public class SliderCounter : MonoBehaviour
         voronoiDensity,
         voronoiOffsetX,
         voronoiOffsetY,
-
+        
         //Room distribution
         Room_Count,
         Random_Room_Placement_Seed,
@@ -34,7 +34,11 @@ public class SliderCounter : MonoBehaviour
         Accretion_Max_Range,
         //Room Shapes
         Room_Size,
-        CanGenerateRoomsOverTerrain
+        CanGenerateRoomsOverTerrain,
+        CorridorSeed,
+        RandomRoomSeed,
+        //Color
+        ColorVarience
     }
     public enum roundDisplayType
     {
@@ -130,12 +134,23 @@ public class SliderCounter : MonoBehaviour
             case dataType.Accretion_Max_Range:
                 RoomDistributor.instance.SetAccretionMaxRange(Mathf.RoundToInt(val));
                 break;
+            
+            
             case dataType.Room_Size:
                 RoomShapeGenerator.instance.SetRoomSize(Mathf.RoundToInt(val));
                 break;
             case dataType.CanGenerateRoomsOverTerrain:
                 bool b = Mathf.RoundToInt(val) > 0 ? true : false;
                 RoomShapeGenerator.instance.SetRoomsCanGenerateOverTerrain(b);
+                break;
+            case dataType.CorridorSeed:
+                RoomShapeGenerator.instance.SetCorridorSeed(Mathf.RoundToInt(val));
+                break;
+            case dataType.RandomRoomSeed:
+                RoomShapeGenerator.instance.SetRandomSeed(Mathf.RoundToInt(val));
+                break;
+            case dataType.ColorVarience:
+                TileColorSetter.instance.SetTileColorVarience(val);
                 break;
         }
     }

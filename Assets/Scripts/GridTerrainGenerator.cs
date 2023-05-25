@@ -27,6 +27,7 @@ public class GridTerrainGenerator : MonoBehaviour
     private int voronoiDensity = 5;
     private Vector2 voronoiOffset = new Vector2();
     public static GridTerrainGenerator instance;
+
     void Awake()
     {
         if(instance != null)

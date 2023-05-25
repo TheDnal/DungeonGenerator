@@ -131,3 +131,11 @@ exciting
 Added A color selection system where you can set the color of each tile type and it'll
 update in real time. Also made large progress with the poster, all thats needed now
 is to fill out the information
+
+25/05/23
+Added color varience, kind of like static or noise that you can add to the color selection.
+It helps sell certain things like dirt or water.
+BSP successfully added. Seeds added for corridors and the "ALL" Setting for room shape now
+randomly cycles between different shapes for rooms (also can be seeded). Next is to work on the
+Cellular automata rooms and begin work on the room details page. After implementing CA and adding
+more inputs to the BSP, room shape and room distribution will be completed. Very exciting!
