@@ -126,3 +126,8 @@ besides random and CA shapes. Work started on generating corridors.
 Room accretion and corridors completed. Rooms can now be toggled to not generate 
 over terrain which makes cool looking rooms. Its starting to come together now which is
 exciting
+
+24/05/23
+Added A color selection system where you can set the color of each tile type and it'll
+update in real time. Also made large progress with the poster, all thats needed now
+is to fill out the information

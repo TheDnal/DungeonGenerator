@@ -146,5 +146,12 @@ public class TileGrid : MonoBehaviour
             }
         }
     }
+    public void RefreshTileColors()
+    {
+        foreach(Tile tile in tiles)
+        {
+            tile.PaintTile(tile.type,true);
+        }
+    }
     public Vector2Int GetDimensions(){return dimensions;}
 }

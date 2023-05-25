@@ -19,14 +19,6 @@ public class Tile : MonoBehaviour
     public static Color corridorColor = Color.white;
 
     private Room room;
-    public bool insideRoom()
-    {
-        return room == null ? false : true;
-    }
-    public void Init(Vector2Int _coords)
-    {
-        coords = _coords;
-    }
     public enum TileType
     {
         blank,
@@ -37,6 +29,63 @@ public class Tile : MonoBehaviour
         Corridor
     }
     public TileType type = TileType.blank;
+    public static void SetColor(int _typeIndex)
+    {
+        Color col = ColorPickerControl.instance.GetColor(); //Get col from color picker
+        Debug.Log("Color set to : " + col);
+        switch((TileType)_typeIndex)
+        {
+            case TileType.blank:
+                defaultColor = col;
+                break;
+            case TileType.terrain:
+                terrainColor = col;
+                break;
+            case TileType.room:
+                roomColor = col;
+                break;
+            case TileType.Edge:
+                edgeColor = col;
+                break;
+            case TileType.hidden:
+                break;
+            case TileType.Corridor:
+                corridorColor = col;
+                break;
+            default:
+                break;
+        }
+        TileGrid.instance.RefreshTileColors();
+    }
+    public static Color GetColor(int _typeIndex)
+    {
+        switch((TileType)_typeIndex)
+        {
+            case TileType.blank:
+                return defaultColor;
+            case TileType.terrain:
+                return terrainColor;
+            case TileType.room:
+                return roomColor;
+            case TileType.Edge:
+                return edgeColor;
+            case TileType.hidden:
+                return defaultColor;
+            case TileType.Corridor:
+                return corridorColor;
+            default:
+                return defaultColor;
+                break;
+        }
+    }
+    public bool insideRoom()
+    {
+        return room == null ? false : true;
+    }
+    public void Init(Vector2Int _coords)
+    {
+        coords = _coords;
+    }
     public static float GetDistance(Tile a,Tile b, TileGrid.TileGridShape _shape)
     {
         if(_shape == TileGrid.TileGridShape.SQUARE)
@@ -157,9 +206,9 @@ public class Tile : MonoBehaviour
         }
         HighlightTile(false);
     }
-    public void PaintTile(TileType _type)
+    public void PaintTile(TileType _type, bool _overrideAll = false)
     {
-        if(type == TileType.Edge){return;}
+        if(type == TileType.Edge && _overrideAll == false){return;}
         this.GetComponent<Renderer>().enabled = true;
         Vector3 pos = transform.position;
         Color col = defaultColor;

@@ -9,7 +9,9 @@ public class dropdownController : MonoBehaviour
         GridShape,
         TerrainType,
         RoomDistributionType,
-        RoomShapeType
+        RoomShapeType,
+        None,
+        SetTileTypesColor
     }
     public dropdownType type = dropdownType.GridShape;
     public SubMenuController subMenu;
@@ -30,8 +32,13 @@ public class dropdownController : MonoBehaviour
             case dropdownType.RoomShapeType:
                 RoomShapeGenerator.instance.SetRoomShape(index);
                 break;
+            case dropdownType.SetTileTypesColor:
+                break;
+            default:
+                break;
         }
         if(subMenu == null){return;}
         subMenu.ChangeSubMenu(index);
     }
+    public int GetIndex(){return this.GetComponent<TMP_Dropdown>().value;}
 }
