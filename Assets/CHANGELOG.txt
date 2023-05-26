@@ -145,3 +145,6 @@ Cellular Automata added. Added CA to random room settings. Added room details su
 erosion (corridors moved over to room details and given extra settings). Added optional description
 popups to pretty much everyplace on the UI. Replaced any binary sliders (i.e. yes or no) with
 functioning tick boxes as that makes much more sense. Fixed some camera controller stuff.
+
+I believe this means that the project is effectively finished. Honestly wished i had more time to 
+add more things to it but im happy with where its at.
