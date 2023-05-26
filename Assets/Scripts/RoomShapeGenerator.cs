@@ -17,6 +17,7 @@ public class RoomShapeGenerator : MonoBehaviour
     public bool roomsCanGenerateIntoTerrain = true;
     public int corridorSeed = 0;
     public int randomSeed = 0;
+    public int automataSeed = 0;
     public static RoomShapeGenerator instance;
     void Awake()
     {
@@ -35,7 +36,6 @@ public class RoomShapeGenerator : MonoBehaviour
         if(rooms == null){return;}
         if(rooms.Count < 1){return;}
         TileGrid.instance.ClearAllRooms();
-        Random.seed = randomSeed;
         switch(shape)
         {
             case RoomShape.SQUARES:
@@ -47,19 +47,27 @@ public class RoomShapeGenerator : MonoBehaviour
             case RoomShape.CIRCLES:
                 foreach(Room room in rooms)
                 {
-                GenerateCircleRoom(room);
+                    GenerateCircleRoom(room);
+                }
+                break;
+            case RoomShape.CELLULAR_AUTOMATA:
+                Random.seed = automataSeed;
+                foreach(Room room in rooms)
+                {
+                    GenerateCellularAutomataRoom(room);
                 }
                 break;
             case RoomShape.ALL:
+                Random.seed = randomSeed;
                 foreach(Room room in rooms)
                 {
-                    int rnd = Random.Range(0,2);
+                    int rnd = Random.Range(0,3);
                     if(rnd == 0){GenerateCircleRoom(room);}
                     else if(rnd == 1){GenerateSquareRoom(room);}
+                    else{GenerateCellularAutomataRoom(room);}
                 }
                 break;
         }
-        GenerateAllCorridors();
     }
     private void GenerateCircleRoom(Room room)
     {
@@ -79,6 +87,7 @@ public class RoomShapeGenerator : MonoBehaviour
             neighbour.PaintTile(Tile.TileType.room);
             temp.Add(neighbour);
         }
+        room.AddTiles(temp);
     }
     private void GenerateSquareRoom(Room room)
     {
@@ -97,86 +106,71 @@ public class RoomShapeGenerator : MonoBehaviour
             neighbour.PaintTile(Tile.TileType.room);
             temp.Add(neighbour);
         }
+        room.AddTiles(temp);
     }
-    private void GenerateAllCorridors()
+    private void GenerateCellularAutomataRoom(Room room)
     {
-        if(rooms == null){return;}
-        if(rooms.Count < 1){return;}
-        //Corridors are L shape, meaning they're a straight vertical line and horizontal line
-
-        //Iterate throughout each room
-        //Check if it has a room connection
-        //Randomly decide whether to generate the corridor horizontally or vertically
-        int height = 0,width = 0;
-        Random.seed = corridorSeed;
-        foreach(Room room in rooms)
+        //Uses as 5/4 rule,
+        //a tile becomes a blank tile if it was a blank tile and and 4 or more of its neighbours are
+        //blank tiles
+        //a tile becomes a blank tile if it is not a blank tile and 5 or more its neighbours are blank tiles
+        //Got the rule from : https://roguebasin.com/index.php/Cellular_Automata_Method_for_Generating_Random_Cave-Like_Levels
+        int iterations = 15; //Number of iterations to condense noise into room
+        List<Tile> temp = new List<Tile>();
+        temp.Clear();
+        int radius = 1 + (roomSize * 2);
+        room.rootTile.PaintTile(Tile.TileType.room);
+        Vector2Int regionCorner = room.rootTile.GetCoords() - Vector2Int.one * roomSize;
+        Vector2Int dimensions = radius * Vector2Int.one;
+        //Tiles must all be changed at the same time for cellular automata to work, so tiles that need to change are cached
+        List<Tile> nextIterationBlankTiles = new List<Tile>(), nextIterationRoomTiles = new List<Tile>();
+        
+        //Randomly set tiles
+        foreach(Tile tile in TileGrid.instance.GetTilesInRegion(regionCorner,dimensions))
         {
-            if(room.GetConnectedRooms().Count == 0){continue;}
-            foreach(Room _connectedRoom in room.GetConnectedRooms())
+            if(tile.type == Tile.TileType.terrain && !roomsCanGenerateIntoTerrain){continue;}
+            if(Random.Range(0,100) > 45){tile.PaintTile(Tile.TileType.room);}
+        }
+        for(int i =0 ; i < iterations; i++)
+        {
+            nextIterationBlankTiles.Clear();
+            nextIterationRoomTiles.Clear();
+            //Iterate over each tile 
+            foreach(Tile tile in TileGrid.instance.GetTilesInRegion(regionCorner,dimensions))
             {
-                height = _connectedRoom.rootTile.GetCoords().y - 
-                         room.rootTile.GetCoords().y;
-                width = _connectedRoom.rootTile.GetCoords().x -
-                        room.rootTile.GetCoords().x;
-                bool heightFirst = Random.Range(0,10) > 5 ? true : false;
-                GenerateCorridor(room.rootTile.GetCoords(),_connectedRoom.rootTile.GetCoords(), heightFirst);
+                int blankNeighbours = 0;
+                foreach(Tile neighbourTile in tile.GetNeighbours())
+                {
+                    if(neighbourTile.type == Tile.TileType.blank){blankNeighbours++;}
+                }
+                //Check if can become blank tile
+                if(tile.type == Tile.TileType.terrain && !roomsCanGenerateIntoTerrain){continue;}
+                if(blankNeighbours >= 5 && tile.type != Tile.TileType.blank)
+                {
+                    nextIterationBlankTiles.Add(tile);
+                }
+                else if(blankNeighbours >= 4 && tile.type == Tile.TileType.blank)
+                {
+                    nextIterationBlankTiles.Add(tile);
+                }
+                else
+                {
+                    nextIterationRoomTiles.Add(tile);
+                }
+            }
+            foreach(Tile tile in nextIterationBlankTiles)
+            {
+                tile.PaintTile(Tile.TileType.blank);
+            }
+            foreach(Tile tile in nextIterationRoomTiles)
+            {
+                tile.PaintTile(Tile.TileType.room);
             }
         }
+        room.AddTiles(temp);
     }
-    private void GenerateCorridor(Vector2Int _startCoord, Vector2Int _endCoord, bool heightFirst)
-    {
-        //Random check for whether to generate the corridor horizontally or vertically first
-        //Get the lengths of the corridors
-        int height = _endCoord.y - _startCoord.y;
-        int width = _endCoord.x - _startCoord.x;
-        if(heightFirst) //Generate the vertical corridor first
-        {
-            if(height != 0)
-            {
-                int magnitude = height > 0 ? 1 : -1;
-                Vector2Int direction = new Vector2Int(0,magnitude);
-                if(!DrawCorridorLine(_startCoord,Mathf.Abs(height),direction)){return;}
-            }
-            if(width != 0)
-            {
-                int magnitude = width > 0 ? 1 : -1;
-                Vector2Int direction = new Vector2Int(magnitude,0);
-                DrawCorridorLine(_startCoord + new Vector2Int(0,height),Mathf.Abs(width),direction);
-            }
-        }
-        else    //Generate the horizontal corridor first
-        {
-            if(width != 0)
-            {
-                int magnitude = width > 0 ? 1 : -1;
-                Vector2Int direction = new Vector2Int(magnitude,0);
-                if(!DrawCorridorLine(_startCoord,Mathf.Abs(width),direction)){return;}
-            }
-            if(height != 0)
-            {
-                int magnitude = height > 0 ? 1 : -1;
-                Vector2Int direction = new Vector2Int(0,magnitude);
-                DrawCorridorLine(_startCoord + new Vector2Int(width,0),Mathf.Abs(height),direction);
-            }
-        }
-    }
-    private bool DrawCorridorLine(Vector2Int _startCoord, int _length, Vector2Int _direction)
-    {
-        //Return false bool if corridor connects to another corridor, preventing second part of the corridor to generate 
-        if(_length == 0){return true;}
-        //Iterate along the direction for length steps, starting from the start coord. 
-        Vector2Int currCoord = _startCoord;
-        for(int i = 0; i < _length; i ++)
-        {
-            currCoord = _startCoord + (i * _direction);
-            Tile currTile = TileGrid.instance.GetTile(currCoord);
-            if(currTile == null){continue;}
-            //if(currTile.type == Tile.TileType.Corridor){return false;}
-            if(currTile.type == Tile.TileType.room){continue;}
-            currTile.PaintTile(Tile.TileType.Corridor);
-        }
-        return true;
-    }
+    
+    #region Setters
     public void SetRoomShape(int _RoomShapeIndex)
     {
         shape = (RoomShape)_RoomShapeIndex;
@@ -201,4 +195,11 @@ public class RoomShapeGenerator : MonoBehaviour
         randomSeed = _seed;
         Generate();
     }
+    public void SetAutomataSeed(int _seed)
+    {
+        automataSeed = _seed;
+        Generate();
+    }
+    #endregion
+    public List<Room> GetRooms(){return rooms;}
 }

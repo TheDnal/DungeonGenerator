@@ -32,11 +32,16 @@ public class SliderCounter : MonoBehaviour
         Random_Room_Placement_Seed,
         Accretion_Min_Range,
         Accretion_Max_Range,
+        Max_Partitions,
         //Room Shapes
         Room_Size,
         CanGenerateRoomsOverTerrain,
         CorridorSeed,
         RandomRoomSeed,
+        AutomataSeed,
+
+        //Room Details
+        ErosionAmount,
         //Color
         ColorVarience
     }
@@ -134,7 +139,10 @@ public class SliderCounter : MonoBehaviour
             case dataType.Accretion_Max_Range:
                 RoomDistributor.instance.SetAccretionMaxRange(Mathf.RoundToInt(val));
                 break;
-            
+            case dataType.Max_Partitions:
+                RoomDistributor.instance.SetMaxPartitions(Mathf.RoundToInt(val));
+                break;
+                
             
             case dataType.Room_Size:
                 RoomShapeGenerator.instance.SetRoomSize(Mathf.RoundToInt(val));
@@ -144,11 +152,21 @@ public class SliderCounter : MonoBehaviour
                 RoomShapeGenerator.instance.SetRoomsCanGenerateOverTerrain(b);
                 break;
             case dataType.CorridorSeed:
-                RoomShapeGenerator.instance.SetCorridorSeed(Mathf.RoundToInt(val));
+                RoomDetailsGenerator.instance.SetCorridorSeed(Mathf.RoundToInt(val));
                 break;
             case dataType.RandomRoomSeed:
                 RoomShapeGenerator.instance.SetRandomSeed(Mathf.RoundToInt(val));
                 break;
+            case dataType.AutomataSeed:
+                RoomShapeGenerator.instance.SetAutomataSeed(Mathf.RoundToInt(val));
+                break;
+
+
+            case dataType.ErosionAmount:
+                RoomDetailsGenerator.instance.SetErosionValue(val);
+                break;
+
+
             case dataType.ColorVarience:
                 TileColorSetter.instance.SetTileColorVarience(val);
                 break;

@@ -29,6 +29,6 @@ public class TileColorSetter : MonoBehaviour
     {
         if(_varience == varience){return;}
         varience = _varience;
-        SetTileColor();
+        //SetTileColor();
     }
 }

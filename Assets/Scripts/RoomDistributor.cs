@@ -60,6 +60,11 @@ public class RoomDistributor : MonoBehaviour
         accretionMinRange = _minRange;
         Generate();
     }
+    public void SetMaxPartitions(int _partitions)
+    {
+        maxPartitions = _partitions;
+        Generate();
+    }
     #endregion
     public List<Room> GetRooms(){return rooms;}
     private void Generate()
@@ -189,7 +194,8 @@ public class RoomDistributor : MonoBehaviour
         {
             iter ++;
             //4 - Iterate through divisible list, select biggest bsp
-            Partition partitionToDivide = GetLargestPartition(divisiblePartitions);
+            //Partition partitionToDivide = GetLargestPartition(divisiblePartitions);
+            Partition partitionToDivide = divisiblePartitions[Random.Range(0,divisiblePartitions.Count)];
             divisiblePartitions.Remove(partitionToDivide);
 
             List<Partition> childPartitions = AttemptSplitPartiton(partitionToDivide);
@@ -197,7 +203,6 @@ public class RoomDistributor : MonoBehaviour
             {
                 continue;
             }
-            Debug.Log(childPartitions.Count);
             partitionToDivide.childPartitions = childPartitions;
             foreach(Partition p in childPartitions)
             {
@@ -226,6 +231,7 @@ public class RoomDistributor : MonoBehaviour
                 biggestPartition = p;
             }
         }
+        Debug.Log("largeest partition is size :" + largestSize + " out of " + _sample.Count + " partitions");
         return biggestPartition;
     }
     private List<Partition> AttemptSplitPartiton(Partition _partitionToSplit)

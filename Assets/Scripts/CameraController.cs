@@ -51,7 +51,6 @@ public class CameraController : MonoBehaviour
         if(cam.orthographic)
         {
             cam.orthographicSize += velocity.y * moveSpeed * Time.deltaTime;
-            return; 
         }
         transform.position += velocity * moveSpeed * Time.deltaTime;
         Vector3 pos = transform.position;

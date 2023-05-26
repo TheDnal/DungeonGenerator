@@ -17,11 +17,13 @@ public class Tile : MonoBehaviour
     public static Color roomColor = Color.white;
     public static Color edgeColor = Color.black;
     public static Color corridorColor = Color.white;
+    public static Color WallColor = new Color(0.25f,0.25f,0.25f,1);
     public static float defaultVarience = 0;
     public static float terrainVarience = 0;
     public static float roomVarience = 0;
     public static float edgeVarience = 0;
     public static float corridorVarience = 0;
+    public static float WallVarience = 0;
     private Room room;
     public enum TileType
     {
@@ -30,7 +32,8 @@ public class Tile : MonoBehaviour
         room,
         Edge,
         hidden,
-        Corridor
+        Corridor,
+        Wall
     }
     public TileType type = TileType.blank;
     public static void SetColor(int _typeIndex, float _varience = 0)
@@ -60,6 +63,10 @@ public class Tile : MonoBehaviour
                 corridorColor = col;
                 corridorVarience = _varience;
                 break;
+            case TileType.Wall:
+                WallColor = col;
+                WallVarience = _varience;
+                break;
             default:
                 break;
         }
@@ -81,6 +88,8 @@ public class Tile : MonoBehaviour
                 return defaultColor;
             case TileType.Corridor:
                 return corridorColor;
+            case TileType.Wall:
+                return WallColor;
             default:
                 return defaultColor;
                 break;
@@ -138,42 +147,6 @@ public class Tile : MonoBehaviour
             }
         }
         return Neighbours;
-        // switch(TileGrid.instance.GetTileGridShape())
-        // {
-        //     case TileGrid.TileGridShape.SQUARE:
-        //         AddNeighbourToList(new Vector2Int(-1,-1),_includeAll);
-        //         AddNeighbourToList( new Vector2Int(-1,0),_includeAll);
-        //         AddNeighbourToList( new Vector2Int(-1,1),_includeAll);
-
-        //         AddNeighbourToList(new Vector2Int(0,-1),_includeAll);
-        //         AddNeighbourToList( new Vector2Int(0,1),_includeAll);
-
-        //         AddNeighbourToList( new Vector2Int(1,-1),_includeAll);
-        //         AddNeighbourToList( new Vector2Int(1,0),_includeAll);
-        //         AddNeighbourToList( new Vector2Int(1,1),_includeAll);
-        //         break;
-        //     case TileGrid.TileGridShape.HEX:
-        //         AddNeighbourToList(new Vector2Int(-1,0),_includeAll);
-        //         AddNeighbourToList(new Vector2Int(1,0),_includeAll);
-
-        //         AddNeighbourToList(new Vector2Int(0,-1),_includeAll);
-        //         AddNeighbourToList(new Vector2Int(0,1),_includeAll);
-        //         if(coords.y % 2 == 0)
-        //         {
-        //             AddNeighbourToList(new Vector2Int(1,-1),_includeAll);
-        //             AddNeighbourToList(new Vector2Int(1,1),_includeAll);
-        //         }
-        //         else
-        //         {
-        //             AddNeighbourToList(new Vector2Int(-1,1),_includeAll);
-        //             AddNeighbourToList(new Vector2Int(-1,-1),_includeAll);
-        //         }
-        //         break;
-        //     default:
-        //         break;
-        // }
-        // return Neighbours;
-        //Prune list
     }
     private void AddNeighbourToList(Vector2Int offset, bool _includeAll = false)
     {
@@ -251,6 +224,11 @@ public class Tile : MonoBehaviour
                 pos.y = 0.0f;
                 col = corridorColor;
                 varience = corridorVarience;
+                break;
+            case TileType.Wall:
+                pos.y = 0;
+                col = WallColor;
+                varience = WallVarience;
                 break;
         }
         if(varience != 0)

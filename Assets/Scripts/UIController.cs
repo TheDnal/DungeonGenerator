@@ -6,7 +6,7 @@ public class UIController : MonoBehaviour
 {
     public static UIController instance;
     public GameObject showUIButton, hideUIButton;
-    public GameObject MainMenuUI,GenerateGridUI,GenerateTerrainUI, RoomDistributionUI, RoomShapeUI,RoomDetailsUI,MiscUI,HelpUI;
+    public GameObject MainMenuUI,GenerateGridUI,GenerateTerrainUI, RoomDistributionUI, RoomShapeUI,RoomDetailsUI,MiscUI;
     public enum UIPage
     {
         HIDDEN,
@@ -16,8 +16,7 @@ public class UIController : MonoBehaviour
         ROOM_DISTRIBUTION,
         ROOM_SHAPE,
         ROOM_DETAILS,
-        MISC,
-        HELP
+        MISC
     }
     private UIPage currPage;
     void Awake()
@@ -70,9 +69,6 @@ public class UIController : MonoBehaviour
             case UIPage.MISC:
                 MiscUI.SetActive(true);
                 break;
-            case UIPage.HELP:
-                HelpUI.SetActive(true);
-                break;
         }
     }
     public void HideUI()
@@ -86,7 +82,6 @@ public class UIController : MonoBehaviour
         RoomShapeUI.SetActive(false);
         RoomDetailsUI.SetActive(false);
         MiscUI.SetActive(false);
-        HelpUI.SetActive(false);
     }
     public void ShowUI()
     {
