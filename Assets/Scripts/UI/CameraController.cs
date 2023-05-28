@@ -4,13 +4,16 @@ using UnityEngine;
 
 public class CameraController : MonoBehaviour
 {
-    public Vector3 startPos = Vector3.up * 25f;
-    public float maxHeight = 75;
-    public float minheight = 15;
-    public float moveSpeed = 25;
-    public float maxX, minX, maxZ,minZ;
+    /*
+        Simple camera controller, works with both orthographic and perspective cameras.
+    */
+    public Vector3 startPos = Vector3.up * 25f; //Start pos of the camera
+    public float maxHeight = 75; //max Y pos
+    public float minheight = 15; //min Y pos
+    public float moveSpeed = 25; //Move speed 
+    public float maxX, minX, maxZ,minZ; // Min/maxes for x and z
 
-    void Start()
+    void Start() //reset pos
     {
         //Start pos
         transform.position = startPos;
@@ -27,8 +30,6 @@ public class CameraController : MonoBehaviour
         {
             velocity += Vector3.down;
         }
-        //Apply velocity to transform
-        
         if(Input.GetKey(KeyCode.W) && transform.position.z <= maxZ)
         {
             velocity += Vector3.forward;
@@ -46,14 +47,16 @@ public class CameraController : MonoBehaviour
         {
             velocity += Vector3.left;
         }
-        //Clamp
+
+        //Get camera reference
         Camera cam = this.GetComponent<Camera>();
-        if(cam.orthographic)
+        if(cam.orthographic) //Change ortho size if ortho camera
         {
             cam.orthographicSize += velocity.y * moveSpeed * Time.deltaTime;
         }
-        transform.position += velocity * moveSpeed * Time.deltaTime;
+        transform.position += velocity * moveSpeed * Time.deltaTime; //apply velocity to camera
         Vector3 pos = transform.position;
+        //Clamp position
         pos.y = Mathf.Clamp(pos.y,minheight,maxHeight);
         transform.position = pos;
     }

@@ -10149,7 +10149,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   gridCentre: {x: 0, y: 0, z: 0}
   gridDimensions: {x: 50, y: 50}
-  squareTileDimensions: 1.1
+  squareTileDimensions: 1
   hexTileDimensions: 1
   squareTilePrefab: {fileID: 5719493688605595355, guid: 231e182767a89774091eaf5e40e46b39, type: 3}
   hexTilePrefab: {fileID: 5719493688605595355, guid: e100638664c86ee46ba5e2fcb17e9892, type: 3}
@@ -34592,6 +34592,7 @@ MonoBehaviour:
   RoomDistributionUI: {fileID: 364025650}
   RoomShapeUI: {fileID: 160253648}
   RoomDetailsUI: {fileID: 2070504527}
+  MiscUI: {fileID: 67597433}
 --- !u!1 &1437652126
 GameObject:
   m_ObjectHideFlags: 0
@@ -51736,8 +51737,8 @@ MonoBehaviour:
   m_fontMaterials: []
   m_fontColor32:
     serializedVersion: 2
-    rgba: 4289261031
-  m_fontColor: {r: 0.90588236, g: 0.92941177, b: 0.65882355, a: 1}
+    rgba: 4294178992
+  m_fontColor: {r: 0.6901961, g: 0.972549, b: 0.9529412, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
   m_fontColorGradient:

@@ -4,30 +4,32 @@ using UnityEngine;
 using Unity.Mathematics;
 public class GridTerrainGenerator : MonoBehaviour
 {
-    public enum TerrainType
+    /*
+        Class that controls the generation of terrain on the grid
+    */
+    public enum TerrainType //The type of terrain
     {
         PERLIN,
         VORONOI,
         RANDOM,
         NONE
     }
-    public TerrainType terrainType = TerrainType.RANDOM;
+    public TerrainType terrainType = TerrainType.RANDOM; //the current terrain
     //Rand
-    private int rndSeed = 0;
-    public float rndChance = 0.1f;
+    private int rndSeed = 0; //Seed for the random generation
+    public float rndChance = 0.1f; //The chance for a tile to become terrain in random terrain
     //Perlin
-    private int perlinSeed = 0;
-    public float scale = 1;
-    public float threshold = 0.3f;
-    public Vector2 perlinOffset = new Vector2();
+    private int perlinSeed = 0; //The seed for perlin generation
+    public float scale = 25; //The scale of the perlin noise
+    public float threshold = 0.3f; //The threshold perin noise has to be below for the tile to become terrain
+    public Vector2 perlinOffset = new Vector2(); //Offset of the noise
 
     //voronoi 
-    private int voronoiSeed = 0;
-    private float voronoiRadius = 1;
-    private int voronoiDensity = 5;
-    private Vector2 voronoiOffset = new Vector2();
-    public static GridTerrainGenerator instance;
-
+    private int voronoiSeed = 0; //Seed of the voronoi noise
+    private float voronoiRadius = 1; //Radius of the voronoi cells
+    private int voronoiDensity = 5; //Density of the voronoi cells
+    private Vector2 voronoiOffset = new Vector2(); //Offset of the voronoi cells
+    public static GridTerrainGenerator instance; //Singleong
     void Awake()
     {
         if(instance != null)
@@ -41,14 +43,14 @@ public class GridTerrainGenerator : MonoBehaviour
         voronoiOffset = Vector2.zero;
         instance = this;
     }
-    public void SetTerrainType(int _index)
+    public void SetTerrainType(int _index) //Set terrain type
     {
         terrainType = (TerrainType)_index;
         GenerateTerrain();
     }
-    public void GenerateTerrain()
+    public void GenerateTerrain() //Generate the currently selected terrain
     {
-        ResetTerrain();
+        ResetTerrain(); //reset all terrain
         switch(terrainType)
         {
             case TerrainType.RANDOM:
@@ -61,64 +63,64 @@ public class GridTerrainGenerator : MonoBehaviour
                 ResetTerrain();
                 break;
             case TerrainType.VORONOI:
-                ApplyCellularNoise();
+                ApplyVoronoiNoise();
                 break;
             default:
                 ResetTerrain(); 
                 break;
         }
     }
-    private void ApplyRandNoise()
+    private void ApplyRandNoise() //Apply terrain randomly based on random.range
     {
-        Tile[,] tiles = TileGrid.instance.GetTiles();
-        Vector2Int dimensions = TileGrid.instance.GetDimensions();
-        UnityEngine.Random.seed = rndSeed;
-        foreach(Tile currTile in tiles)
+        Tile[,] tiles = TileGrid.instance.GetTiles(); //Get all tiles
+        UnityEngine.Random.seed = rndSeed; //set seed
+        foreach(Tile currTile in tiles) //iterate through the grid
         {
+            //Apply the random noise if a random value of 0-100 is below the rndChance
             float chance = UnityEngine.Random.Range(0,100);
             if(chance <= rndChance * 100)
             {
-                currTile.PaintTile(Tile.TileType.terrain);
+                currTile.PaintTile(Tile.TileType.terrain); //apply terrain
             }
         }
     }
-    private void ApplyPerlinNoise()
+    private void ApplyPerlinNoise() //Applies perlin noise to the grid
     {
-        Tile[,] tiles = TileGrid.instance.GetTiles();
-        Vector2Int dimensions = TileGrid.instance.GetDimensions();
-        if(scale <= 0)
+        Tile[,] tiles = TileGrid.instance.GetTiles(); //Get all tiles
+        Vector2Int dimensions = TileGrid.instance.GetDimensions(); // Get the dimensions
+        if(scale <= 0) //Clamp the scale
         {
             scale = 0.01f;
         }
         for(int y = 0; y < dimensions.y; y++){
-            for(int x = 0; x < dimensions.x; x++)
+            for(int x = 0; x < dimensions.x; x++) //Iterate through each tile on the grid
             {
-                float sampleX = (x + perlinOffset.x) / scale;
-                float sampleY = (y + perlinOffset.y) / scale;
-                float val = Mathf.PerlinNoise(sampleX,sampleY);
-                if(val <= threshold)
+                float sampleX = (x + perlinOffset.x) / scale; //Perlin X value
+                float sampleY = (y + perlinOffset.y) / scale; //Perlin Y value
+                float val = Mathf.PerlinNoise(sampleX,sampleY); //Value of perlin noise at the cooridante
+                if(val <= threshold) //If below the threshold, apply perlin noise
                 {
                     tiles[x,y].PaintTile(Tile.TileType.terrain);
                 }
             }
         }
     }
-    private void ApplyCellularNoise()
+    private void ApplyVoronoiNoise() //Apply Voronoi noise to the grid
     {
-        Tile[,] tiles = TileGrid.instance.GetTiles();
+        Tile[,] tiles = TileGrid.instance.GetTiles(); //Get all tiles
         Vector2Int dimensions = TileGrid.instance.GetDimensions();
-        UnityEngine.Random.seed = voronoiSeed;
-        List<Vector2> voronoiPoints = new List<Vector2>();
-        for(int i = 0; i < voronoiDensity; i++)
+        UnityEngine.Random.seed = voronoiSeed; //Set seed
+        List<Vector2> voronoiPoints = new List<Vector2>(); //Cache all Voronoi cells
+        for(int i = 0; i < voronoiDensity; i++) //Randomly distribute cells on the grid
         {
             float x = UnityEngine.Random.Range(0,dimensions.x);
             float y = UnityEngine.Random.Range(0,dimensions.y);
             voronoiPoints.Add(new Vector2(x,y));
         }
         for(int x = 0; x < dimensions.x; x++){
-            for(int y = 0; y < dimensions.y; y++)
+            for(int y = 0; y < dimensions.y; y++) //Iterate through each tile on the grid
             {
-                foreach(Vector2 point in voronoiPoints)
+                foreach(Vector2 point in voronoiPoints) //If time within distance of any voronoi cell, become terrain
                 {
                     float distance = Vector2.Distance(point, new Vector2(x + voronoiOffset.x,y + voronoiOffset.y));
                     if(distance <= voronoiRadius)
@@ -130,11 +132,12 @@ public class GridTerrainGenerator : MonoBehaviour
             }
         }
     }
-    private void ResetTerrain()
+    private void ResetTerrain() //Reset all terrain
     {
         TileGrid.instance.ResetGrid();
     }
     #region PerlinSetters
+    //Set all the values for Perlin Noise generation
     public void SetPerlinSeed(int _seed)
     {
         perlinSeed = _seed;
@@ -162,6 +165,7 @@ public class GridTerrainGenerator : MonoBehaviour
     }
     #endregion
     #region RndSetters
+    //Sets all the values for rand noise
     public void SetRandThreshold(float _val)
     {
         rndChance = _val;
@@ -174,6 +178,7 @@ public class GridTerrainGenerator : MonoBehaviour
     }
     #endregion
     #region Voronoi Setters
+    //sets all the values for voronoi noise
     public void SetVoronoiSeed(int _seed)
     {   
         voronoiSeed = _seed;

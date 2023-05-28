@@ -5,7 +5,8 @@ using TMPro;
 using UnityEngine.UI;
 public class SliderCounter : MonoBehaviour
 {
-    public enum dataType
+    //Class the controls the slider counter and implements whatever value it represents
+    public enum dataType //all the different data types the slider counter can represent
     {
         //GridData
         gridWidth,
@@ -45,7 +46,7 @@ public class SliderCounter : MonoBehaviour
         //Color
         ColorVarience
     }
-    public enum roundDisplayType
+    public enum roundDisplayType //How it converst the slider value
     {
         integer,
         one_decimal_place,
@@ -53,13 +54,13 @@ public class SliderCounter : MonoBehaviour
     }
     public roundDisplayType roundingType = roundDisplayType.integer;
     public dataType sliderType;
-    public float min = 0, max =1;
-    public TextMeshProUGUI counter;
+    public float min = 0, max =1; //min max values
+    public TextMeshProUGUI counter; //Text that shows the current value
     public void UpdateCounter()
     {
-        float sliderVal = this.GetComponent<Slider>().value;
-        float val = Mathf.Lerp(min,max,sliderVal);
-        switch(roundingType)
+        float sliderVal = this.GetComponent<Slider>().value; //update the current value
+        float val = Mathf.Lerp(min,max,sliderVal); //Clamp the value
+        switch(roundingType) //Round the value 
         {
             case roundDisplayType.integer:
                 val = Mathf.Round(val);
@@ -73,9 +74,9 @@ public class SliderCounter : MonoBehaviour
         }
         if(counter != null)
         {
-            counter.text = val.ToString();
+            counter.text = val.ToString(); //update the counter
         }
-        switch(sliderType)
+        switch(sliderType) //Apply slider value to whatever other class requires it
         {
 
             case dataType.gridWidth:

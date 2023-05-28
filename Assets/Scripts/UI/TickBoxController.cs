@@ -4,9 +4,10 @@ using UnityEngine;
 using UnityEngine.UI;
 public class TickBoxController : MonoBehaviour
 {
-    public Image tickImage; 
-    public bool ticked = false;
-    public enum DataType
+    //Class that controls the Tick boxes found within the program
+    public Image tickImage; //Image of the tick
+    public bool ticked = false; //Whether or not the tickboxed is ticked
+    public enum DataType //The data that the tickbox is in charge of
     {
         Null,
         CanGenerateOverTerrain,
@@ -20,14 +21,15 @@ public class TickBoxController : MonoBehaviour
     public DataType type = DataType.Null;
     void Start()
     {
+        //Set the tick boxes default state
         tickImage.gameObject.SetActive(ticked);
     }
 
-    public void ToggleTicked()
+    public void ToggleTicked() //When the mouse clicks on the tickbox
     {
-        ticked = ticked == true ? false : true;
-        tickImage.gameObject.SetActive(ticked);
-        switch(type)
+        ticked = ticked == true ? false : true; //Swap bool value
+        tickImage.gameObject.SetActive(ticked); //display or hide the tick
+        switch(type) //Update relevant data
         {
             case DataType.Null:
                 break;

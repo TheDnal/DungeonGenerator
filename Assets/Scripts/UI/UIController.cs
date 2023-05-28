@@ -4,10 +4,12 @@ using UnityEngine;
 
 public class UIController : MonoBehaviour
 {
-    public static UIController instance;
-    public GameObject showUIButton, hideUIButton;
-    public GameObject MainMenuUI,GenerateGridUI,GenerateTerrainUI, RoomDistributionUI, RoomShapeUI,RoomDetailsUI;
-    public enum UIPage
+    /*
+        Simple UI state machine that controls the UI for the program
+    */
+    public GameObject showUIButton, hideUIButton; //Button that controls whether the ui is showing or not
+    public GameObject MainMenuUI,GenerateGridUI,GenerateTerrainUI, RoomDistributionUI, RoomShapeUI,RoomDetailsUI, MiscUI; //All UI states / pages
+    public enum UIPage //UIPages
     {
         HIDDEN,
         MAIN_MENU,
@@ -15,9 +17,11 @@ public class UIController : MonoBehaviour
         GENERATE_TERRAIN,
         ROOM_DISTRIBUTION,
         ROOM_SHAPE,
-        ROOM_DETAILS
+        ROOM_DETAILS,
+        MISC
     }
-    private UIPage currPage;
+    private UIPage currPage; //current UI page
+    public static UIController instance; //Singleton
     void Awake()
     {
         if(instance != null)
@@ -31,18 +35,19 @@ public class UIController : MonoBehaviour
     }
     void Start()
     {
-        HideUI();
+        HideUI(); //Hide all ui
     }
-    public void GoToPage(int _pageNum)
+    public void GoToPage(int _pageNum) //Set UI state / current page
     {
         currPage = (UIPage)_pageNum;
         RefreshPage();
     }
-    private void RefreshPage()
+    private void RefreshPage() //Refresh page
     {
+        //hide all pages
         HideUI();
         ShowUI();
-        switch(currPage)
+        switch(currPage) //show only the required page
         {
             case UIPage.HIDDEN:
                 HideUI();
@@ -65,9 +70,13 @@ public class UIController : MonoBehaviour
             case UIPage.ROOM_DETAILS:
                 RoomDetailsUI.SetActive(true);
                 break;
+            case UIPage.MISC:
+                MiscUI.SetActive(true);
+                break;
+
         }
     }
-    public void HideUI()
+    public void HideUI() //hides all the pages
     {
         showUIButton.SetActive(true);
         hideUIButton.SetActive(false);
@@ -77,8 +86,9 @@ public class UIController : MonoBehaviour
         RoomDistributionUI.SetActive(false);
         RoomShapeUI.SetActive(false);
         RoomDetailsUI.SetActive(false);
+        MiscUI.SetActive(false);
     }
-    public void ShowUI()
+    public void ShowUI() //Shows the correct button
     {
         hideUIButton.SetActive(true);
         showUIButton.SetActive(false);

@@ -4,21 +4,23 @@ using UnityEngine;
 
 public class RoomShapeGenerator : MonoBehaviour
 {
-    public enum RoomShape
+    /*
+        Class that generates the shape of each room
+    */
+    public enum RoomShape //Shape that rooms will take
     {
         CIRCLES,
         SQUARES,
         CELLULAR_AUTOMATA,
-        ALL
+        ALL //Will randomly cycle between all other room shapes 
     }
-    private RoomShape shape = RoomShape.CIRCLES;
-    private List<Room> rooms = new List<Room>();
-    public int roomSize = 1;
-    public bool roomsCanGenerateIntoTerrain = true;
-    public int corridorSeed = 0;
-    public int randomSeed = 0;
-    public int automataSeed = 0;
-    public static RoomShapeGenerator instance;
+    private RoomShape shape = RoomShape.CIRCLES; //Default room shape
+    private List<Room> rooms = new List<Room>(); //List of rooms
+    public int roomSize = 1; //Size of rooms
+    public bool roomsCanGenerateIntoTerrain = true; //Controls whether or not rooms can override terrain tiles
+    public int randomSeed = 0; //Seed for all shapes
+    public int automataSeed = 0; //seed for cellular automata rooms
+    public static RoomShapeGenerator instance; //Singleton
     void Awake()
     {
         if(instance != null)
@@ -30,36 +32,36 @@ public class RoomShapeGenerator : MonoBehaviour
         }
         instance = this;
     }
-    public void Generate()
+    public void Generate() //Generates room shapes
     {
-        rooms = RoomDistributor.instance.GetRooms();
+        rooms = RoomDistributor.instance.GetRooms(); //gets all rooms from the room distributor
         if(rooms == null){return;}
         if(rooms.Count < 1){return;}
-        TileGrid.instance.ClearAllRooms();
+        TileGrid.instance.ClearAllRooms(); //Clears all room shapes that may have existed
         switch(shape)
         {
             case RoomShape.SQUARES:
-                foreach(Room room in rooms)
+                foreach(Room room in rooms) //Generate squares for each room
                 {
                     GenerateSquareRoom(room);
                 }
                 break;
             case RoomShape.CIRCLES:
-                foreach(Room room in rooms)
+                foreach(Room room in rooms) //Generate circles for each room
                 {
                     GenerateCircleRoom(room);
                 }
                 break;
             case RoomShape.CELLULAR_AUTOMATA:
                 Random.seed = automataSeed;
-                foreach(Room room in rooms)
+                foreach(Room room in rooms) //Generate automata shapes for each room
                 {
                     GenerateCellularAutomataRoom(room);
                 }
                 break;
             case RoomShape.ALL:
                 Random.seed = randomSeed;
-                foreach(Room room in rooms)
+                foreach(Room room in rooms) //For each room, randomly pick a room generation type
                 {
                     int rnd = Random.Range(0,3);
                     if(rnd == 0){GenerateCircleRoom(room);}
@@ -69,44 +71,44 @@ public class RoomShapeGenerator : MonoBehaviour
                 break;
         }
     }
-    private void GenerateCircleRoom(Room room)
+    private void GenerateCircleRoom(Room room) //Sets all tiles within a radius of the rooms root to room tiles
     {
         List<Tile> temp = new List<Tile>();
-        int circleRadius = 1 + (roomSize * 3);
+        int circleRadius = 1 + (roomSize * 3); //radius of circle
         temp.Clear();
-        room.rootTile.PaintTile(Tile.TileType.room);
-        Vector2Int regionCorner = room.rootTile.GetCoords() - Vector2Int.one * roomSize;
-        Vector2Int dimensions = circleRadius * Vector2Int.one;
-        foreach(Tile neighbour in TileGrid.instance.GetTilesInRegion(regionCorner,dimensions))
+        room.rootTile.PaintTile(Tile.TileType.room); //paint root tile
+        Vector2Int regionCorner = room.rootTile.GetCoords() - Vector2Int.one * roomSize; //get region of affected tiles
+        Vector2Int dimensions = circleRadius * Vector2Int.one; 
+        foreach(Tile neighbour in TileGrid.instance.GetTilesInRegion(regionCorner,dimensions)) //Iterate through each tile in area
         {
-            if(!roomsCanGenerateIntoTerrain)
+            if(!roomsCanGenerateIntoTerrain) //If cant generate over terrain, and the tile type is hidden or terrain, continue
             {
                 if(neighbour.type == Tile.TileType.hidden || neighbour.type == Tile.TileType.terrain){continue;}
             }
-            if(Vector3.Distance(neighbour.transform.position, room.rootTile.transform.position) > roomSize){continue;}
-            neighbour.PaintTile(Tile.TileType.room);
+            if(Vector3.Distance(neighbour.transform.position, room.rootTile.transform.position) > roomSize){continue;} //if distance too great, continue
+            neighbour.PaintTile(Tile.TileType.room); //paint tile and add it to list
             temp.Add(neighbour);
         }
-        room.AddTiles(temp);
+        room.AddTiles(temp); //add all tiles in list to room 
     }
-    private void GenerateSquareRoom(Room room)
+    private void GenerateSquareRoom(Room room) //Adds all tiles within square region to room tiles
     {
         List<Tile> temp = new List<Tile>();
-        int radius = 1 + (roomSize * 2);
+        int radius = 1 + (roomSize * 2); //radius of area
         temp.Clear();
-        room.rootTile.PaintTile(Tile.TileType.room);
-        Vector2Int regionCorner = room.rootTile.GetCoords() - Vector2Int.one * roomSize;
+        room.rootTile.PaintTile(Tile.TileType.room); //paint root tile
+        Vector2Int regionCorner = room.rootTile.GetCoords() - Vector2Int.one * roomSize; //get corner of region
         Vector2Int dimensions = radius * Vector2Int.one;
-        foreach(Tile neighbour in TileGrid.instance.GetTilesInRegion(regionCorner,dimensions))
+        foreach(Tile neighbour in TileGrid.instance.GetTilesInRegion(regionCorner,dimensions)) //Get all tiles in region
         {
-            if(!roomsCanGenerateIntoTerrain)
+            if(!roomsCanGenerateIntoTerrain) //If cant generate over terrain, and the tile type is hidden or terrain, continue 
             {
                 if(neighbour.type == Tile.TileType.hidden || neighbour.type == Tile.TileType.terrain){continue;}
             }
-            neighbour.PaintTile(Tile.TileType.room);
+            neighbour.PaintTile(Tile.TileType.room); //paint tile and add to list
             temp.Add(neighbour);
         }
-        room.AddTiles(temp);
+        room.AddTiles(temp); //add all tiles in list to room
     }
     private void GenerateCellularAutomataRoom(Room room)
     {
@@ -158,6 +160,7 @@ public class RoomShapeGenerator : MonoBehaviour
                     nextIterationRoomTiles.Add(tile);
                 }
             }
+            //Set up the next iteration of Cellular automata tiles at the same time
             foreach(Tile tile in nextIterationBlankTiles)
             {
                 tile.PaintTile(Tile.TileType.blank);
@@ -167,10 +170,11 @@ public class RoomShapeGenerator : MonoBehaviour
                 tile.PaintTile(Tile.TileType.room);
             }
         }
-        room.AddTiles(temp);
+        room.AddTiles(temp); //add all valid tiles to room
     }
     
     #region Setters
+    //Set values
     public void SetRoomShape(int _RoomShapeIndex)
     {
         shape = (RoomShape)_RoomShapeIndex;
@@ -185,11 +189,6 @@ public class RoomShapeGenerator : MonoBehaviour
         roomsCanGenerateIntoTerrain = _canGenerateOverTerrain;
         Generate();
     }
-    public void SetCorridorSeed(int _seed)
-    {
-        corridorSeed = _seed;
-        Generate();
-    }
     public void SetRandomSeed(int _seed)
     {
         randomSeed = _seed;
@@ -201,5 +200,5 @@ public class RoomShapeGenerator : MonoBehaviour
         Generate();
     }
     #endregion
-    public List<Room> GetRooms(){return rooms;}
+    public List<Room> GetRooms(){return rooms;} //Get all rooms 
 }

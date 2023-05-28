@@ -4,16 +4,18 @@ using UnityEngine;
 
 public class RoomDetailsGenerator : MonoBehaviour
 {
-    public static RoomDetailsGenerator instance;
-    private bool corridorsEnabled = false;
-    private bool corridorsOverlap = false;
-    private bool wallsEnabled = false;
-    private bool erosionEnabled = false;
-    private bool wallsGenerateThroughTerrain = false;
-    private bool corridorsHaveWalls = false;
-    private float wallErosion = 0;
-    private int corridorSeed = 0;
-    private float erosionVal = .05f;
+    /*
+        This class generates all details in the room generator (except color, which is seperate)
+    */
+    private bool corridorsEnabled = false; //Decides whether to generate corridors
+    private bool corridorsOverlap = false; //If false, corrdiors will stop generating when they intersect another corridor
+    private bool wallsEnabled = false; //Decides whether to generate walls
+    private bool erosionEnabled = false; //When enabled, some walls fail to generate, simulating erosion
+    private bool wallsGenerateThroughTerrain = false; //When enabled, terrain tiles can be set to wall tiles
+    private bool corridorsHaveWalls = false; //when enabled, corridors have walls
+    private int corridorSeed = 0; //Seed for corridor generation
+    private float erosionVal = .05f; //Value of erosion, where 1 is total erosion and 0 is no erosion
+    public static RoomDetailsGenerator instance; //Singleton instance
     void Awake()
     {
         if(instance != null)
@@ -25,6 +27,7 @@ public class RoomDetailsGenerator : MonoBehaviour
         }
         instance = this;
     }
+    #region Setters
     public void SetCorridorsEnabled(bool _enabled)
     {
         corridorsEnabled = _enabled;
@@ -65,15 +68,18 @@ public class RoomDetailsGenerator : MonoBehaviour
         wallsGenerateThroughTerrain = _enabled;
         Generate();
     }
+    #endregion
     public void Generate()
     {
-        RoomShapeGenerator.instance.Generate();
+        RoomShapeGenerator.instance.Generate(); //Regenerate room shapes
+
+        //Selectively generate these details in the following order
         if(corridorsEnabled){GenerateAllCorridors();}
         if(wallsEnabled){GenerateWalls();}
         if(erosionEnabled){GenerateErosion();}
     }
     #region Corridor Generation
-    private void GenerateAllCorridors()
+    private void GenerateAllCorridors() //Connects rooms together by generating L shape corridors
     {
         List<Room> rooms = RoomShapeGenerator.instance.GetRooms();
         if(rooms == null){return;}
@@ -85,17 +91,18 @@ public class RoomDetailsGenerator : MonoBehaviour
         //Randomly decide whether to generate the corridor horizontally or vertically
         int height = 0,width = 0;
         Random.seed = corridorSeed;
-        foreach(Room room in rooms)
+        foreach(Room room in rooms) //iterate through each room
         {
-            if(room.GetConnectedRooms().Count == 0){continue;}
-            foreach(Room _connectedRoom in room.GetConnectedRooms())
+            if(room.GetConnectedRooms().Count == 0){continue;} //no connections, continue
+            foreach(Room _connectedRoom in room.GetConnectedRooms()) //iterate through each iteration
             {
+                //Get the height and width that the corridor must travel
                 height = _connectedRoom.rootTile.GetCoords().y - 
                          room.rootTile.GetCoords().y;
                 width = _connectedRoom.rootTile.GetCoords().x -
                         room.rootTile.GetCoords().x;
-                bool heightFirst = Random.Range(0,10) > 5 ? true : false;
-                GenerateCorridor(room.rootTile.GetCoords(),_connectedRoom.rootTile.GetCoords(), heightFirst);
+                bool heightFirst = Random.Range(0,10) > 5 ? true : false; //does the corridor generate vertically (true) or horizontally (false) first
+                GenerateCorridor(room.rootTile.GetCoords(),_connectedRoom.rootTile.GetCoords(), heightFirst); //Generate new corridor
             }
         }
     }
@@ -155,12 +162,13 @@ public class RoomDetailsGenerator : MonoBehaviour
     }
     #endregion
     #region Wall Generation
-    private void GenerateWalls()
+    private void GenerateWalls() //Generates wall around rooms and, if enabled, corridors
     {
         List<Tile> wallTiles = new List<Tile>();
         int x = 0;
-        foreach(Tile tile in TileGrid.instance.GetUnsortedTiles())
+        foreach(Tile tile in TileGrid.instance.GetUnsortedTiles()) //Iterate through every tile on grid
         {
+            //If invalid tile type, skip
             if(corridorsHaveWalls)
             {
                 if(tile.type != Tile.TileType.room && tile.type != Tile.TileType.Corridor){continue;}
@@ -169,36 +177,45 @@ public class RoomDetailsGenerator : MonoBehaviour
             {
                 if(tile.type != Tile.TileType.room){continue;}
             }
+            //Iterate through this tiles neighbours
             foreach(Tile neighbourTile in tile.GetNeighbours(wallsGenerateThroughTerrain))
             {
                 if(neighbourTile.type == Tile.TileType.room || neighbourTile.type == Tile.TileType.Corridor){continue;}
-                wallTiles.Add(neighbourTile);
+                wallTiles.Add(neighbourTile); //if this tile has a room (or corridor tile if enabled) then add to list
             }
         }
-        foreach(Tile wallTile in wallTiles)
+        foreach(Tile wallTile in wallTiles) //foreach valid tile, set its type to wall
         {
             wallTile.PaintTile(Tile.TileType.Wall);
         }
     }
     #endregion
     #region Erosion Generation
-    private void GenerateErosion()
+    private void GenerateErosion() //Generates erosion, where tils with room neighbours (or corridor neighbours if enabled) randomly become room tiles (or corridor tiles if enabled)
     {
+        //cache temp lists
         List<Tile> erodedRoomTiles = new List<Tile>();
         List<Tile> erodedCorridorTiles = new List<Tile>();
-        foreach(Tile tile in TileGrid.instance.GetTiles())
+        foreach(Tile tile in TileGrid.instance.GetTiles()) //Iterate through every tile
         {
+            //if invalid tile type, skip
             if(tile.type != Tile.TileType.room && tile.type != Tile.TileType.Corridor){continue;}
-            foreach(Tile neighbour in tile.GetNeighbours(true))
+            foreach(Tile neighbour in tile.GetNeighbours(true)) //Iterate through every neighbour
             {
+                //if invalid type, skip
                 if(neighbour.type == Tile.TileType.room || neighbour.type == Tile.TileType.Corridor || neighbour.type == Tile.TileType.Edge){continue;}
-                if(Random.Range(0,10) >= erosionVal * 10){continue;}
+                if(Random.Range(0,10) >= erosionVal * 10){continue;} //If not eroded, skip
+                //If lists contain tile, skip
                 if(erodedRoomTiles.Contains(neighbour)){continue;}
                 if(erodedCorridorTiles.Contains(neighbour)){continue;}
+                
+                //add tile to either room or corridor erosion lists
                 if(tile.type == Tile.TileType.room){erodedRoomTiles.Add(neighbour);}
                 else{erodedCorridorTiles.Add(neighbour);}
             }
         }
+
+        //apply erosion to valid tiles
         foreach(Tile tile in erodedRoomTiles)
         {
             tile.PaintTile(Tile.TileType.room);

@@ -4,13 +4,16 @@ using UnityEngine;
 
 public class GridGenerator : MonoBehaviour
 {
-    public Vector3 gridCentre;
-    public Vector2Int gridDimensions;
-    public float squareTileDimensions = 1f;
-    public float hexTileDimensions = 0.9f;
-    public GameObject squareTilePrefab, hexTilePrefab;
-    public TileGrid.TileGridShape gridShape = TileGrid.TileGridShape.SQUARE;
-    public static GridGenerator instance;
+    /*
+        This class controls the generation of the main tile grid
+    */
+    public Vector3 gridCentre; //Centre of the grid
+    public Vector2Int gridDimensions; //Dimensions of the grid
+    public float squareTileDimensions = 1f; //Dimensions of square tiles
+    public float hexTileDimensions = 0.9f; //dimensions of hex tiles
+    public GameObject squareTilePrefab, hexTilePrefab; //tile prefabs
+    public TileGrid.TileGridShape gridShape = TileGrid.TileGridShape.SQUARE; //grid shape
+    public static GridGenerator instance; //Singleton instance
     void Awake()
     {
         if(instance != null)
@@ -21,9 +24,9 @@ public class GridGenerator : MonoBehaviour
             }
         }
         instance = this;
-        GenerateGrid();
+        GenerateGrid(); //Generate on awake
     }
-    public void GenerateGrid()
+    public void GenerateGrid() //Depending on the grid shape, intiialise the tile grid with the relevant info
     {
         switch(gridShape)
         {
@@ -35,19 +38,19 @@ public class GridGenerator : MonoBehaviour
                 break;
         }
     }
-    public void SetHeight(int _height)
+    public void SetHeight(int _height) //Set the height of the grid
     {
         gridDimensions.y = _height;
         GenerateGrid();
     }
-    public void SetWidth(int _width)
+    public void SetWidth(int _width) //Set the width of the grid
     {
         gridDimensions.x = _width;
         GenerateGrid();
     }
-    public void SetGridShape(int _index )
+    public void SetGridShape(int _index ) //Set the tile shape of the grid
     {
-        gridShape = (TileGrid.TileGridShape)_index;
+        gridShape = (TileGrid.TileGridShape)_index; //cast the correct shape
         GenerateGrid();
     }
 }

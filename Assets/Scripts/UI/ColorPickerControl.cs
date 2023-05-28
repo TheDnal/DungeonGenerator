@@ -4,16 +4,21 @@ using TMPro;
 
 public class ColorPickerControl : MonoBehaviour
 {
-    public float currentHue,currentSat,currentVal;
+    /*
+        Followed tutorial from : https://www.youtube.com/watch?v=otDHGmncBQY&list=LL&index=2
+        for this script.
+        This script calculates the color that the user clicks on in the UI, using the SVImage control script
+    */
+    public float currentHue,currentSat,currentVal; //Different HSV values for the color
     [SerializeField]
-    private RawImage hueImage, satValImage, outputImage;
+    private RawImage hueImage, satValImage, outputImage; //Different image references for the color picker UI
     [SerializeField]
-    private Slider hueSlider;
+    private Slider hueSlider; //Hue slider reference
     [SerializeField]
-    private TMP_InputField hexInputField;
+    private TMP_InputField hexInputField; //Input field for inputting hex values of colors
     
-    private Texture2D hueTexture,svTexture,outputTexture;
-    public static ColorPickerControl instance;
+    private Texture2D hueTexture,svTexture,outputTexture; //Cached textures
+    public static ColorPickerControl instance; //Singletong instance
     void Awake()
     {
         if(instance != null)
@@ -27,6 +32,7 @@ public class ColorPickerControl : MonoBehaviour
     }
     private void Start()
     {
+        //Restart all methods (resets all the textures)
         CreateHueImage();
 
         CreateSVImage();
@@ -37,6 +43,7 @@ public class ColorPickerControl : MonoBehaviour
     }
     private void CreateHueImage()
     {
+        //Creates hue image on the UI
         hueTexture = new Texture2D(1,16);
         hueTexture.wrapMode = TextureWrapMode.Clamp;
         hueTexture.name = "HueTexture";
@@ -54,6 +61,7 @@ public class ColorPickerControl : MonoBehaviour
     }
     private void CreateSVImage()
     {
+        //Creates saturation value image for the UI.
         svTexture = new Texture2D(16,16);
         svTexture.wrapMode = TextureWrapMode.Clamp;
         svTexture.name = "SatValTexture";
@@ -78,6 +86,7 @@ public class ColorPickerControl : MonoBehaviour
 
     private void CreateOuputImage()
     {
+        //Creates the output image for the UI.
         outputTexture = new Texture2D(1,16);
         outputTexture.wrapMode = TextureWrapMode.Clamp;
         outputTexture.name = "OutputTexture";
@@ -96,6 +105,7 @@ public class ColorPickerControl : MonoBehaviour
 
     private void UpdateOutputImage()
     {
+        //Updates the Output image for the UI
         Color currentColor = Color.HSVToRGB(currentHue,currentSat,currentVal);
 
         for(int i = 0; i < outputTexture.height; i++)
@@ -112,6 +122,7 @@ public class ColorPickerControl : MonoBehaviour
 
     public void SetSV(float _S, float _V)
     {
+        //Sets the Saturation value for the UI
         currentSat = _S;
         currentVal = _V;
 
@@ -120,6 +131,7 @@ public class ColorPickerControl : MonoBehaviour
 
     public void UpdateSVImage()
     {
+        //Updates the Saturation value for the UI
         currentHue = hueSlider.value;
 
         for(int y =0; y < svTexture.height; y++)
@@ -140,6 +152,7 @@ public class ColorPickerControl : MonoBehaviour
 
     public void OnTextInput()
     {
+        //Applys the hexadecimal color code into the class
         if(hexInputField.text.Length < 6){return;}
 
         Color newCol;
@@ -155,6 +168,7 @@ public class ColorPickerControl : MonoBehaviour
     }
     public Color GetColor()
     {
+        //Get the color that was picked
         return Color.HSVToRGB(currentHue,currentSat,currentVal);
     }
 }
